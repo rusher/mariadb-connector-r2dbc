@@ -72,7 +72,6 @@ public final class ClientImpl implements Client {
 
   private ClientImpl(Connection connection) {
     this.connection = connection;
-
   }
 
   public void enableInbound() {
