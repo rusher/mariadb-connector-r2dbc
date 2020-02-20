@@ -7,7 +7,7 @@ addons:
     - mariadb.example.com
 
 before_install:
-  - chmod +x .travis/script.sh .travis/build/build.sh .travis/gen-ssl.sh +x .travis/build/docker-entrypoint.sh
+  - chmod +x .travis/script.sh .travis/build/build.sh .travis/gen-ssl.sh .travis/build/docker-entrypoint.sh
   - chmod 777 .travis/build/
   - echo "MAVEN_OPTS='-Xmx384m'" > ~/.mavenrc
 
@@ -49,30 +49,14 @@ matrix:
     - env: DB=mariadb:10.3 PACKET=8M
       jdk: openjdk11
     - env: DB=mariadb:10.4 PACKET=8M
-      jdk: oraclejdk11
+      jdk: openjdk11
+    - env: DB=mariadb:10.5 PACKET=8M
+      jdk: openjdk11
     - env: DB=mariadb:10.4 PACKET=8M
-      jdk: openjdk11
-    - env: DB=mariadb:10.4 PACKET=8M GALERA=true
-      jdk: openjdk11
-    - env: DB=mariadb:10.4 PACKET=8M PROFILE=true
-      jdk: openjdk11
-    - env: DB=mariadb:10.4 PACKET=8M TYPE=PREPARE
-      jdk: openjdk11
-    - env: DB=mariadb:10.4 PACKET=8M TYPE=REWRITE
-      jdk: openjdk11
-    - env: DB=mariadb:10.4 PACKET=8M TYPE=MULTI
-      jdk: openjdk11
+      jdk: oraclejdk11
     - env: DB=mariadb:10.4 PACKET=20M
       jdk: openjdk11
     - env: DB=mariadb:10.4 PACKET=40M
-      jdk: openjdk11
-    - env: DB=mariadb:10.4 PACKET=40M TYPE=BULK_SERVER
-      jdk: openjdk11
-    - env: DB=mariadb:10.4 PACKET=40M TYPE=NO_BULK_CLIENT
-      jdk: openjdk11
-    - env: DB=mariadb:10.4 PACKET=40M TYPE=NO_BULK_SERVER
-      jdk: openjdk11
-    - env: DB=mariadb:10.4 PACKET=40M COMPRESSION=true
       jdk: openjdk11
     - env: DB=mariadb:10.4 PACKET=8M
       jdk: openjdk12
