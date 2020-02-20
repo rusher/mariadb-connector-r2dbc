@@ -26,7 +26,7 @@ if [ -n "$MAXSCALE_VERSION" ]; then
   ###################################################################################################################
   # launch Maxscale with one server
   ###################################################################################################################
-  export TEST_PORT = 4007
+  export TEST_PORT=4007
   mysql=(mysql --protocol=tcp -ubob -h127.0.0.1 --port=4007)
   export COMPOSE_FILE=.travis/maxscale-compose.yml
   docker-compose -f ${COMPOSE_FILE} build

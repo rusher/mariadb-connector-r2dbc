@@ -20,7 +20,6 @@ import io.r2dbc.mariadb.BaseTest;
 import io.r2dbc.mariadb.api.MariadbConnection;
 import io.r2dbc.mariadb.api.MariadbConnectionMetadata;
 import io.r2dbc.mariadb.api.MariadbResult;
-import io.r2dbc.spi.Connection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ public class BigResultSetTest extends BaseTest {
     System.out.println("BigResultSet");
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
     // sequence table requirement
-    Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
+    Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10, 1, 0));
 
     sharedConn
         .createStatement("SELECT * FROM seq_1_to_10000")
@@ -51,7 +50,7 @@ public class BigResultSetTest extends BaseTest {
   void multipleFluxSubscription() {
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
     // sequence table requirement
-    Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
+    Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10, 1, 0));
     Flux<MariadbResult> res = sharedConn.createStatement("SELECT * FROM seq_1_to_50").execute();
 
     Flux<String> flux1 =
@@ -59,37 +58,49 @@ public class BigResultSetTest extends BaseTest {
 
     AtomicInteger total = new AtomicInteger();
     for (int i = 0; i < 10; i++) {
-      flux1.subscribe(
-          out -> total.incrementAndGet());
+      flux1.subscribe(out -> total.incrementAndGet());
     }
 
     flux1.doOnComplete(() -> Assertions.assertTrue(total.get() > 200)).blockLast();
   }
 
-
   @Test
   void multiPacketRow() {
-    Assumptions.assumeTrue(checkMaxAllowedPacketMore20m(sharedConn) && Boolean.parseBoolean(System.getProperty("RUN_LONG_TEST", "true")));
+    Assumptions.assumeTrue(
+        checkMaxAllowedPacketMore20m(sharedConn)
+            && Boolean.parseBoolean(System.getProperty("RUN_LONG_TEST", "true")));
     System.out.println("multiPacketRow");
     final char[] array19m = new char[19000000];
     for (int i = 0; i < array19m.length; i++) {
       array19m[i] = (char) (0x30 + (i % 10));
     }
 
-    sharedConn.createStatement("CREATE TEMPORARY TABLE multiPacketRow(val LONGTEXT)").execute().subscribe();
-    sharedConn.createStatement("INSERT INTO multiPacketRow VALUES (?)")
+    sharedConn
+        .createStatement("CREATE TEMPORARY TABLE multiPacketRow(val LONGTEXT)")
+        .execute()
+        .subscribe();
+    sharedConn
+        .createStatement("INSERT INTO multiPacketRow VALUES (?)")
         .bind(0, new String(array19m))
         .execute()
         .blockLast();
-    Assertions.assertArrayEquals(array19m, sharedConn.createStatement("SELECT * FROM multiPacketRow")
+    Assertions.assertArrayEquals(
+        array19m,
+        sharedConn
+            .createStatement("SELECT * FROM multiPacketRow")
             .execute()
-            .flatMap(r -> r.map((row, metadata) -> row.get(0, String.class))).blockLast().toCharArray());
+            .flatMap(r -> r.map((row, metadata) -> row.get(0, String.class)))
+            .blockLast()
+            .toCharArray());
   }
 
   public boolean checkMaxAllowedPacketMore20m(MariadbConnection connection) {
-    long maxAllowedPacket = connection.createStatement("select @@max_allowed_packet")
+    long maxAllowedPacket =
+        connection
+            .createStatement("select @@max_allowed_packet")
             .execute()
-            .flatMap(r -> r.map((row, metadata) -> row.get(0, Long.class))).blockLast();
+            .flatMap(r -> r.map((row, metadata) -> row.get(0, Long.class)))
+            .blockLast();
     return maxAllowedPacket >= 20 * 1024 * 1024L;
   }
 }
