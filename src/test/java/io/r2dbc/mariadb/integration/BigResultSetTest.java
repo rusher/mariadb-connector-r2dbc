@@ -59,18 +59,24 @@ public class BigResultSetTest extends BaseTest {
         res.flatMap(r -> r.map((row, metadata) -> row.get(0, String.class))).share();
 
     AtomicInteger total = new AtomicInteger();
-    for (int i = 0; i < 10; i++) {
-      flux1.subscribe(
-          out -> {
-            System.out.println("subscribe: " + total.get());
-            total.incrementAndGet();
-          });
-    }
-
     flux1.doOnComplete(() -> {
       System.out.println("complete! " + total.get());
       Assertions.assertTrue(total.get() > 50);
-    }).blockLast();
+    });
+
+    Flux<Object>[] fluxes = new Flux[10];
+    for (int i = 0; i < 10; i++) {
+      fluxes[i] = flux1.handle((s, synchronousSink) -> {
+            System.out.println("subscribe: " + total.get());
+            total.incrementAndGet();
+            synchronousSink.next(s);
+          });
+    }
+
+    for (int i = 0; i < 10; i++) {
+      fluxes[i].subscribe();
+    }
+    flux1.blockLast();
   }
 
 
