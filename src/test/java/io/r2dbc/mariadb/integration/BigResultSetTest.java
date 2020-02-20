@@ -33,6 +33,7 @@ public class BigResultSetTest extends BaseTest {
 
   @Test
   void BigResultSet() {
+    System.out.println("BigResultSet");
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
     // sequence table requirement
     Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
@@ -48,6 +49,7 @@ public class BigResultSetTest extends BaseTest {
 
   @Test
   void multipleFluxSubscription() {
+    System.out.println("multipleFluxSubscription");
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
     // sequence table requirement
     Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
@@ -68,6 +70,7 @@ public class BigResultSetTest extends BaseTest {
   @Test
   void multiPacketRow() {
     Assumptions.assumeTrue(checkMaxAllowedPacketMore20m(sharedConn) && Boolean.parseBoolean(System.getProperty("RUN_LONG_TEST", "true")));
+    System.out.println("multiPacketRow");
     final char[] array19m = new char[19000000];
     for (int i = 0; i < array19m.length; i++) {
       array19m[i] = (char) (0x30 + (i % 10));
