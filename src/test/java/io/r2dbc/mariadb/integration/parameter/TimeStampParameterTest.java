@@ -36,7 +36,7 @@ public class TimeStampParameterTest extends BaseTest {
   public static void before2() {
     sharedConn
         .createStatement(
-            "CREATE TEMPORARY TABLE TimestampParam (t1 TIMESTAMP(6), t2 TIMESTAMP(6), t3 TIMESTAMP(6))")
+            "CREATE TEMPORARY TABLE TimestampParam (t1 TIMESTAMP(6) NULL, t2 TIMESTAMP(6) NULL, t3 TIMESTAMP(6) NULL)")
         .execute()
         .subscribe();
     // ensure having same kind of result for truncation
