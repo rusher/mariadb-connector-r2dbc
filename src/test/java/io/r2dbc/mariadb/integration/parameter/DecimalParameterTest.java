@@ -17,6 +17,8 @@
 package io.r2dbc.mariadb.integration.parameter;
 
 import io.r2dbc.mariadb.BaseTest;
+import io.r2dbc.spi.R2dbcBadGrammarException;
+import io.r2dbc.spi.R2dbcException;
 import io.r2dbc.spi.R2dbcTransientResourceException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +31,7 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class DecimalParameterTest extends BaseTest {
@@ -205,14 +208,10 @@ public class DecimalParameterTest extends BaseTest {
         .as(StepVerifier::create)
         .expectErrorMatches(
             throwable ->
-                throwable instanceof R2dbcTransientResourceException
-                    && (((R2dbcTransientResourceException) throwable)
-                            .getSqlState()
-                            .equals("01000") // mariadb
-                        || ((R2dbcTransientResourceException) throwable)
-                            .getSqlState()
-                            .equals("HY000") // mysql
-                    ))
+                (throwable instanceof R2dbcTransientResourceException
+                        || throwable instanceof R2dbcBadGrammarException)
+                    && Arrays.asList(new String[] {"01000", "22007", "HY000"})
+                        .contains(((R2dbcException) throwable).getSqlState()))
         .verify();
   }
 
@@ -228,14 +227,10 @@ public class DecimalParameterTest extends BaseTest {
         .as(StepVerifier::create)
         .expectErrorMatches(
             throwable ->
-                throwable instanceof R2dbcTransientResourceException
-                    && (((R2dbcTransientResourceException) throwable)
-                            .getSqlState()
-                            .equals("01000") // mariadb
-                        || ((R2dbcTransientResourceException) throwable)
-                            .getSqlState()
-                            .equals("HY000") // mysql
-                    ))
+                (throwable instanceof R2dbcTransientResourceException
+                        || throwable instanceof R2dbcBadGrammarException)
+                    && Arrays.asList(new String[] {"01000", "22007", "HY000"})
+                        .contains(((R2dbcException) throwable).getSqlState()))
         .verify();
   }
 
@@ -251,14 +246,10 @@ public class DecimalParameterTest extends BaseTest {
         .as(StepVerifier::create)
         .expectErrorMatches(
             throwable ->
-                throwable instanceof R2dbcTransientResourceException
-                    && (((R2dbcTransientResourceException) throwable)
-                            .getSqlState()
-                            .equals("01000") // mariadb
-                        || ((R2dbcTransientResourceException) throwable)
-                            .getSqlState()
-                            .equals("HY000") // mysql
-                    ))
+                (throwable instanceof R2dbcTransientResourceException
+                        || throwable instanceof R2dbcBadGrammarException)
+                    && Arrays.asList(new String[] {"01000", "22007", "HY000"})
+                        .contains(((R2dbcException) throwable).getSqlState()))
         .verify();
   }
 

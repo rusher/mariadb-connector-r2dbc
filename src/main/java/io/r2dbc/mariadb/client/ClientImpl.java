@@ -29,7 +29,6 @@ import io.r2dbc.mariadb.message.client.ClientMessage;
 import io.r2dbc.mariadb.message.client.QueryPacket;
 import io.r2dbc.mariadb.message.client.QuitPacket;
 import io.r2dbc.mariadb.message.client.SslRequestPacket;
-import io.r2dbc.mariadb.message.flow.AuthenticationFlow;
 import io.r2dbc.mariadb.message.server.InitialHandshakePacket;
 import io.r2dbc.mariadb.message.server.ServerMessage;
 import io.r2dbc.mariadb.util.constants.ServerStatus;
@@ -72,26 +71,24 @@ public final class ClientImpl implements Client {
 
   private ClientImpl(Connection connection) {
     this.connection = connection;
-  }
 
-  public void enableInbound() {
     connection.addHandler(mariadbPacketDecoder);
     connection.addHandler(mariadbPacketEncoder);
     connection.addHandler(mariadbResponseHandler);
 
     if (logger.isTraceEnabled()) {
       connection.addHandlerFirst(
-              LoggingHandler.class.getSimpleName(),
-              new LoggingHandler(ClientImpl.class, LogLevel.TRACE));
+          LoggingHandler.class.getSimpleName(),
+          new LoggingHandler(ClientImpl.class, LogLevel.TRACE));
     }
 
     connection
-            .inbound()
-            .receiveObject()
-            .doOnError(this::handleConnectionError)
-            .doOnComplete(this::handleClose)
-            .then()
-            .subscribe();
+        .inbound()
+        .receiveObject()
+        .doOnError(this::handleConnectionError)
+        .doOnComplete(this::handleClose)
+        .then()
+        .subscribe();
   }
 
   public static Mono<ClientImpl> connect(

@@ -28,8 +28,6 @@ public interface Client {
 
   Mono<Void> close();
 
-  void enableInbound();
-
   Flux<ServerMessage> receive();
 
   Flux<ServerMessage> sendCommand(ClientMessage requests);

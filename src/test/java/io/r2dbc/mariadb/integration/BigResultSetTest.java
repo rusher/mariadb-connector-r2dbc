@@ -37,7 +37,8 @@ public class BigResultSetTest extends BaseTest {
   @Test
   void BigResultSet() {
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
-    Assumptions.assumeTrue(meta.isMariaDBServer()); // MySQL doesn't have sequence table
+    // sequence table requirement
+    Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
 
     sharedConn
         .createStatement(
@@ -52,7 +53,8 @@ public class BigResultSetTest extends BaseTest {
   @Test
   void multipleFluxSubscription() {
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
-    Assumptions.assumeTrue(meta.isMariaDBServer()); // MySQL doesn't have sequence table
+    // sequence table requirement
+    Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
     Flux<MariadbResult> res = sharedConn.createStatement("SELECT * FROM seq_1_to_50").execute();
 
     Flux<String> flux1 =
@@ -66,18 +68,15 @@ public class BigResultSetTest extends BaseTest {
     flux1.doOnComplete(() -> Assertions.assertEquals(500, total.get())).blockLast();
   }
 
-  private static final char[] array19m;
-
-  static {
-    array19m = new char[19000000];
-    for (int i = 0; i < array19m.length; i++) {
-      array19m[i] = (char) (0x30 + (i % 10));
-    }
-  }
 
   @Test
   void multiPacketRow() {
     Assumptions.assumeTrue(checkMaxAllowedPacketMore20m(sharedConn));
+    final char[] array19m = new char[19000000];
+    for (int i = 0; i < array19m.length; i++) {
+      array19m[i] = (char) (0x30 + (i % 10));
+    }
+
     sharedConn.createStatement("CREATE TEMPORARY TABLE multiPacketRow(val LONGTEXT)").execute().subscribe();
     sharedConn.createStatement("INSERT INTO multiPacketRow VALUES (?)")
         .bind(0, new String(array19m))

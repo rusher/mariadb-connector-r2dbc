@@ -24,7 +24,7 @@
         </encoder>
     </appender>
 
-    <logger level="TRACE" name="io.r2dbc.mariadb"/>
+    <logger level="DEBUG" name="io.r2dbc.mariadb"/>
     <logger level="INFO" name="io.netty.buffer"/>
     <logger level="WARN" name="reactor.ipc.netty"/>
     <logger level="INFO" name="stream"/>

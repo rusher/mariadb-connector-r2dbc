@@ -141,7 +141,7 @@ public class ConnectionTest extends BaseTest {
 
   private void consume(io.r2dbc.spi.Connection connection) {
     int loop = 100;
-    int numberOfUserCol = 46;
+    int numberOfUserCol = 41;
     io.r2dbc.spi.Statement statement =
         connection.createStatement("select * FROM mysql.user LIMIT 1");
 

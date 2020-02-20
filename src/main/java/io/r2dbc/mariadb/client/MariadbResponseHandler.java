@@ -53,7 +53,6 @@ public class MariadbResponseHandler extends MessageToMessageDecoder<ServerMessag
   @Override
   protected void decode(ChannelHandlerContext ctx, ServerMessage msg, List<Object> out)
       throws Exception {
-
     if (fluxSink == null) {
       newReceiver();
     }

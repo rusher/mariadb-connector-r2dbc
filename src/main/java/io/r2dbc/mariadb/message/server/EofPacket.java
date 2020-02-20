@@ -34,13 +34,13 @@ public class EofPacket implements ServerMessage {
       final Sequencer sequencer,
       final short serverStatus,
       final short warningCount,
-      final boolean ending,
-      final boolean resultSetEnd) {
+      final boolean resultSetEnd,
+      final boolean ending) {
     this.sequencer = sequencer;
     this.serverStatus = serverStatus;
     this.warningCount = warningCount;
-    this.ending = ending;
     this.resultSetEnd = resultSetEnd;
+    this.ending = ending;
   }
 
   public static EofPacket decode(
@@ -53,8 +53,8 @@ public class EofPacket implements ServerMessage {
         sequencer,
         serverStatus,
         warningCount,
-        (serverStatus & ServerStatus.MORE_RESULTS_EXISTS) == 0,
-        resultSetEnd);
+        resultSetEnd,
+            resultSetEnd && (serverStatus & ServerStatus.MORE_RESULTS_EXISTS) == 0);
   }
 
   public short getServerStatus() {

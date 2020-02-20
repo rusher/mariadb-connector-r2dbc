@@ -165,7 +165,9 @@ public class StatementTest extends BaseTest {
   @Test
   void fetchSize() {
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
-    Assumptions.assumeTrue(meta.isMariaDBServer()); // MySQL doesn't have sequence table
+    // sequence table requirement
+    Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
+
     sharedConn
         .createStatement("SELECT * FROM seq_1_to_1000")
         .fetchSize(100)
