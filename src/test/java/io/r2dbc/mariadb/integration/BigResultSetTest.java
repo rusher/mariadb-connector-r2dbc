@@ -69,7 +69,7 @@ public class BigResultSetTest extends BaseTest {
 
     flux1.doOnComplete(() -> {
       System.out.println("complete! " + total.get());
-      Assertions.assertTrue(total.get() > 200);
+      Assertions.assertTrue(total.get() > 50);
     }).blockLast();
   }
 
