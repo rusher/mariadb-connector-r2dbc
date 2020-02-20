@@ -42,6 +42,8 @@ public class BitParameterTest extends BaseTest {
         .createStatement("CREATE TEMPORARY TABLE ByteParam (t1 BIT(4), t2 BIT(20), t3 BIT(1))")
         .execute()
         .subscribe();
+    // ensure having same kind of result for truncation
+    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
   }
 
   @BeforeEach

@@ -39,6 +39,8 @@ public class MediumIntParameterTest extends BaseTest {
             "CREATE TEMPORARY TABLE MediumIntParam (t1 MEDIUMINT, t2 MEDIUMINT, t3 MEDIUMINT)")
         .execute()
         .subscribe();
+    // ensure having same kind of result for truncation
+    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
   }
 
   @BeforeEach

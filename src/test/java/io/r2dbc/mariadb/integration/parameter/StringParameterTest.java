@@ -39,6 +39,8 @@ public class StringParameterTest extends BaseTest {
             "CREATE TEMPORARY TABLE StringParam (t1 VARCHAR(256), t2 VARCHAR(256), t3 VARCHAR(256))")
         .execute()
         .subscribe();
+    // ensure having same kind of result for truncation
+    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
   }
 
   @BeforeEach

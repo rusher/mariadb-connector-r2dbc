@@ -42,6 +42,8 @@ public class DecimalParameterTest extends BaseTest {
             "CREATE TEMPORARY TABLE DecimalParam (t1 DECIMAL(40,20), t2 DECIMAL(40,20), t3 DECIMAL(40,20))")
         .execute()
         .subscribe();
+    // ensure having same kind of result for truncation
+    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
   }
 
   @BeforeEach

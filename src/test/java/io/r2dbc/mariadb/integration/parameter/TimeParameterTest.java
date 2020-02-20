@@ -39,6 +39,8 @@ public class TimeParameterTest extends BaseTest {
         .createStatement("CREATE TEMPORARY TABLE TimeParam (t1 TIME(6), t2 TIME(6), t3 TIME(6))")
         .execute()
         .subscribe();
+    // ensure having same kind of result for truncation
+    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
   }
 
   @BeforeEach

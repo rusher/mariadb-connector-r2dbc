@@ -39,6 +39,8 @@ public class ShortParameterTest extends BaseTest {
             "CREATE TEMPORARY TABLE SmallIntParam (t1 SMALLINT, t2 SMALLINT, t3 SMALLINT)")
         .execute()
         .subscribe();
+    // ensure having same kind of result for truncation
+    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
   }
 
   @BeforeEach

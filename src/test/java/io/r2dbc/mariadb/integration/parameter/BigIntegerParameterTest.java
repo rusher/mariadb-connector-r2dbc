@@ -38,6 +38,8 @@ public class BigIntegerParameterTest extends BaseTest {
         .createStatement("CREATE TEMPORARY TABLE BigIntParam (t1 BIGINT, t2 BIGINT, t3 BIGINT)")
         .execute()
         .subscribe();
+    // ensure having same kind of result for truncation
+    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
   }
 
   @BeforeEach
