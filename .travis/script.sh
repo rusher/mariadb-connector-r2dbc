@@ -6,10 +6,10 @@ set -e
 ###################################################################################################################
 # test different type of configuration
 ###################################################################################################################
-export TEST_HOST = mariadb.example.com
-export TEST_PORT = 3305
-export TEST_USERNAME = bob
-export TEST_DATABASE = testr2
+export TEST_HOST=mariadb.example.com
+export TEST_PORT=3305
+export TEST_USERNAME=bob
+export TEST_DATABASE=testr2
 
 cmd=(mvn clean test $ADDITIONNAL_VARIABLES -DjobId=${TRAVIS_JOB_ID} \
   -DkeystorePath="$SSLCERT/client-keystore.jks" \
