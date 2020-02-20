@@ -69,10 +69,15 @@ public final class MariadbConnectionFactory implements ConnectionFactory {
         .cast(Client.class)
         .flatMap(
             client -> {
-              Mono<IsolationLevel> isolationLevelMono = getIsolationLevel(client);
-              return isolationLevelMono
-                  .map(it -> new MariadbConnection(client, it, configuration))
-                  .onErrorResume(throwable -> this.closeWithError(client, throwable));
+              if (configuration.getIsolationLevel() == null) {
+                Mono<IsolationLevel> isolationLevelMono = getIsolationLevel(client);
+                return isolationLevelMono
+                    .map(it -> new MariadbConnection(client, it, configuration))
+                    .onErrorResume(throwable -> this.closeWithError(client, throwable));
+              } else {
+                return Mono.just(new MariadbConnection(client, configuration.getIsolationLevel(), configuration))
+                        .onErrorResume(throwable -> this.closeWithError(client, throwable));
+              }
             })
         .onErrorMap(this::cannotConnect);
   }

@@ -19,12 +19,14 @@ package io.r2dbc.mariadb;
 import io.r2dbc.mariadb.util.Assert;
 import io.r2dbc.mariadb.util.SslConfig;
 import io.r2dbc.spi.ConnectionFactoryOptions;
+import io.r2dbc.spi.IsolationLevel;
 import reactor.util.annotation.Nullable;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static io.r2dbc.mariadb.MariadbConnectionFactoryProvider.*;
 import static io.r2dbc.spi.ConnectionFactoryOptions.*;
@@ -44,6 +46,7 @@ public final class MariadbConnectionConfiguration {
   private final SslConfig sslConfig;
   private final String serverRsaPublicKeyFile;
   private final boolean allowPublicKeyRetrieval;
+  private IsolationLevel isolationLevel;
 
   private MariadbConnectionConfiguration(
       @Nullable Duration connectTimeout,
@@ -55,13 +58,13 @@ public final class MariadbConnectionConfiguration {
       @Nullable String socket,
       @Nullable String username,
       boolean allowMultiQueries,
-      List<String> tlsProtocol,
-      String serverSslCert,
-      String clientSslCert,
-      String clientSslKey,
-      CharSequence clientSslPassword,
+      @Nullable List<String> tlsProtocol,
+      @Nullable String serverSslCert,
+      @Nullable String clientSslCert,
+      @Nullable String clientSslKey,
+      @Nullable CharSequence clientSslPassword,
       SslMode sslMode,
-      String serverRsaPublicKeyFile,
+      @Nullable String serverRsaPublicKeyFile,
       boolean allowPublicKeyRetrieval) {
     this.connectTimeout = connectTimeout;
     this.database = database;
@@ -125,6 +128,14 @@ public final class MariadbConnectionConfiguration {
 
   public static Builder builder() {
     return new Builder();
+  }
+
+  public IsolationLevel getIsolationLevel() {
+    return isolationLevel;
+  }
+
+  protected void setIsolationLevel(IsolationLevel isolationLevel) {
+    this.isolationLevel = isolationLevel;
   }
 
   @Nullable
@@ -222,6 +233,30 @@ public final class MariadbConnectionConfiguration {
         + '}';
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    MariadbConnectionConfiguration that = (MariadbConnectionConfiguration) o;
+    return port == that.port &&
+            allowMultiQueries == that.allowMultiQueries &&
+            allowPublicKeyRetrieval == that.allowPublicKeyRetrieval &&
+            Objects.equals(database, that.database) &&
+            Objects.equals(host, that.host) &&
+            Objects.equals(connectTimeout, that.connectTimeout) &&
+            Objects.equals(password, that.password) &&
+            Objects.equals(socket, that.socket) &&
+            Objects.equals(username, that.username) &&
+            Objects.equals(connectionAttributes, that.connectionAttributes) &&
+            Objects.equals(sslConfig, that.sslConfig) &&
+            Objects.equals(serverRsaPublicKeyFile, that.serverRsaPublicKeyFile);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(database, host, connectTimeout, password, port, socket, username, allowMultiQueries, connectionAttributes, sslConfig, serverRsaPublicKeyFile, allowPublicKeyRetrieval);
+  }
+
   /**
    * A builder for {@link MariadbConnectionConfiguration} instances.
    *
@@ -240,11 +275,11 @@ public final class MariadbConnectionConfiguration {
     private int port = DEFAULT_PORT;
     @Nullable private String socket;
     private boolean allowMultiQueries = false;
-    private List<String> tlsProtocol;
-    private String serverSslCert;
-    private String clientSslCert;
-    private String clientSslKey;
-    private CharSequence clientSslPassword;
+    @Nullable private List<String> tlsProtocol;
+    @Nullable private String serverSslCert;
+    @Nullable private String clientSslCert;
+    @Nullable private String clientSslKey;
+    @Nullable private CharSequence clientSslPassword;
     private SslMode sslMode = SslMode.DISABLED;
 
     private Builder() {}

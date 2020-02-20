@@ -40,6 +40,11 @@ final class MariadbConnection implements io.r2dbc.mariadb.api.MariadbConnection 
     this.client = Assert.requireNonNull(client, "client must not be null");
     this.isolationLevel = Assert.requireNonNull(isolationLevel, "isolationLevel must not be null");
     this.configuration = Assert.requireNonNull(configuration, "configuration must not be null");
+
+    // save Global isolation level to avoid asking each new connection with same configuration
+    if (configuration.getIsolationLevel() == null) {
+      configuration.setIsolationLevel(isolationLevel);
+    }
   }
 
   @Override
