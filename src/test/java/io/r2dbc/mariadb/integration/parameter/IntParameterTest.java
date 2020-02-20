@@ -38,6 +38,8 @@ public class IntParameterTest extends BaseTest {
         .createStatement("CREATE TEMPORARY TABLE IntParam (t1 INTEGER, t2 INTEGER, t3 INTEGER)")
         .execute()
         .subscribe();
+    // ensure having same kind of result for truncation
+    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
   }
 
   @BeforeEach

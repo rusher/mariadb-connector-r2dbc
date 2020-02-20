@@ -41,6 +41,9 @@ public class TimeParseTest extends BaseTest {
             "INSERT INTO TimeTable VALUES ('90:00:00.012340'), ('800:00:00.123'), (800), (22), (null)")
         .execute()
         .blockLast();
+    // ensure having same kind of result for truncation
+    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
+
   }
 
   @Test

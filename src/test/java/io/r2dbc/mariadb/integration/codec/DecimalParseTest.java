@@ -68,6 +68,9 @@ public class DecimalParseTest extends BaseTest {
                         .getMessage()
                         .equals("No decoder for type java.lang.Boolean and column type DECIMAL"))
         .verify();
+    // ensure having same kind of result for truncation
+    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
+
   }
 
   @Test
