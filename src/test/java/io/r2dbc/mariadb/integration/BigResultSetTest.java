@@ -33,7 +33,6 @@ public class BigResultSetTest extends BaseTest {
 
   @Test
   void BigResultSet() {
-    System.out.println("BigResultSet");
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
     // sequence table requirement
     Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
@@ -49,7 +48,6 @@ public class BigResultSetTest extends BaseTest {
 
   @Test
   void multipleFluxSubscription() {
-    System.out.println("multipleFluxSubscription");
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
     // sequence table requirement
     Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
@@ -59,15 +57,11 @@ public class BigResultSetTest extends BaseTest {
         res.flatMap(r -> r.map((row, metadata) -> row.get(0, String.class))).share();
 
     AtomicInteger total = new AtomicInteger();
-    flux1.doOnComplete(() -> {
-      System.out.println("complete! " + total.get());
-      Assertions.assertTrue(total.get() > 50);
-    });
+    flux1.doOnComplete(() -> Assertions.assertTrue(total.get() >= 50));
 
-    Flux<Object>[] fluxes = new Flux[10];
+    Flux[] fluxes = new Flux[10];
     for (int i = 0; i < 10; i++) {
       fluxes[i] = flux1.handle((s, synchronousSink) -> {
-            System.out.println("subscribe: " + total.get());
             total.incrementAndGet();
             synchronousSink.next(s);
           });
@@ -83,7 +77,6 @@ public class BigResultSetTest extends BaseTest {
   @Test
   void multiPacketRow() {
     Assumptions.assumeTrue(checkMaxAllowedPacketMore20m(sharedConn) && Boolean.parseBoolean(System.getProperty("RUN_LONG_TEST", "true")));
-    System.out.println("multiPacketRow");
     final char[] array19m = new char[19000000];
     for (int i = 0; i < array19m.length; i++) {
       array19m[i] = (char) (0x30 + (i % 10));
