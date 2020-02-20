@@ -42,8 +42,7 @@ public class AuthSwitchPacket implements ServerMessage {
     String plugin = buf.toString(buf.readerIndex(), nullLength, StandardCharsets.US_ASCII);
     buf.skipBytes(nullLength + 1);
 
-    int seedNullLength = buf.bytesBefore((byte) 0x00);
-    byte[] seed = new byte[seedNullLength == -1 ? buf.readableBytes() : seedNullLength];
+    byte[] seed = new byte[buf.readableBytes()];
     buf.getBytes(buf.readerIndex(), seed);
     return new AuthSwitchPacket(sequencer, plugin, seed);
   }
