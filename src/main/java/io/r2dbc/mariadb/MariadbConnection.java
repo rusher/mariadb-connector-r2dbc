@@ -177,12 +177,12 @@ final class MariadbConnection implements io.r2dbc.mariadb.api.MariadbConnection 
           this.client
               .sendCommand(new PingPacket())
               .windowUntil(it -> it.ending())
-              .map(dataRow -> new MariadbResult(true, dataRow, factory))
-              .flatMap(MariadbResult::getRowsUpdated)
-              .subscribe(msg -> sink.success(true), err -> {
-                logger.debug("Ping error", err);
-                sink.success(false);
-              });
+              .subscribe(
+                  msg -> sink.success(true),
+                  err -> {
+                    logger.debug("Ping error", err);
+                    sink.success(false);
+                  });
         });
   }
 }

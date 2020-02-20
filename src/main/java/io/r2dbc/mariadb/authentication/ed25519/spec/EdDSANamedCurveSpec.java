@@ -20,6 +20,7 @@ import io.r2dbc.mariadb.authentication.ed25519.math.ed25519.ScalarOps;
  */
 public class EdDSANamedCurveSpec extends EdDSAParameterSpec {
 
+  private static final long serialVersionUID = -4771155800270949200L;
   private final String name;
 
   public EdDSANamedCurveSpec(

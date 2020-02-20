@@ -18,6 +18,7 @@ package io.r2dbc.mariadb.integration.parameter;
 
 import io.r2dbc.mariadb.BaseTest;
 import io.r2dbc.spi.Blob;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,10 +71,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, new BigInteger("1"))
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("11".getBytes())),
-        Optional.of(ByteBuffer.wrap("512".getBytes())),
-        Optional.of(ByteBuffer.wrap("1".getBytes())));
+    validateNotNull(
+        ByteBuffer.wrap("11".getBytes()),
+        ByteBuffer.wrap("512".getBytes()),
+        ByteBuffer.wrap("1".getBytes()));
   }
 
   @Test
@@ -86,10 +87,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, "ô\0你好")
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("\1".getBytes(StandardCharsets.UTF_8))),
-        Optional.of(ByteBuffer.wrap("A".getBytes(StandardCharsets.UTF_8))),
-        Optional.of(ByteBuffer.wrap("ô\0你好".getBytes(StandardCharsets.UTF_8))));
+    validateNotNull(
+        ByteBuffer.wrap("\1".getBytes(StandardCharsets.UTF_8)),
+        ByteBuffer.wrap("A".getBytes(StandardCharsets.UTF_8)),
+        ByteBuffer.wrap("ô\0你好".getBytes(StandardCharsets.UTF_8)));
   }
 
   @Test
@@ -101,10 +102,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, new BigDecimal("1"))
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("11".getBytes())),
-        Optional.of(ByteBuffer.wrap("512".getBytes())),
-        Optional.of(ByteBuffer.wrap("1".getBytes())));
+    validateNotNull(
+        ByteBuffer.wrap("11".getBytes()),
+        ByteBuffer.wrap("512".getBytes()),
+        ByteBuffer.wrap("1".getBytes()));
   }
 
   @Test
@@ -116,10 +117,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, 1)
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("11".getBytes())),
-        Optional.of(ByteBuffer.wrap("512".getBytes())),
-        Optional.of(ByteBuffer.wrap("1".getBytes())));
+    validateNotNull(
+        ByteBuffer.wrap("11".getBytes()),
+        ByteBuffer.wrap("512".getBytes()),
+        ByteBuffer.wrap("1".getBytes()));
   }
 
   @Test
@@ -131,10 +132,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, (byte) 0)
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("15".getBytes())),
-        Optional.of(ByteBuffer.wrap("127".getBytes())),
-        Optional.of(ByteBuffer.wrap("0".getBytes())));
+    validateNotNull(
+        ByteBuffer.wrap("15".getBytes()),
+        ByteBuffer.wrap("127".getBytes()),
+        ByteBuffer.wrap("0".getBytes()));
   }
 
   @Test
@@ -146,10 +147,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, Blob.from(Mono.just(ByteBuffer.wrap(new byte[] {0}))))
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap(new byte[] {(byte) 15})),
-        Optional.of(ByteBuffer.wrap(new byte[] {(byte) 1, 0, (byte) 127})),
-        Optional.of(ByteBuffer.wrap(new byte[] {0})));
+    validateNotNull(
+        ByteBuffer.wrap(new byte[] {(byte) 15}),
+        ByteBuffer.wrap(new byte[] {(byte) 1, 0, (byte) 127}),
+        ByteBuffer.wrap(new byte[] {0}));
   }
 
   @Test
@@ -161,10 +162,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, 1f)
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("11.0".getBytes())),
-        Optional.of(ByteBuffer.wrap("512.0".getBytes())),
-        Optional.of(ByteBuffer.wrap("1.0".getBytes())));
+    validateNotNull(
+        ByteBuffer.wrap("11.0".getBytes()),
+        ByteBuffer.wrap("512.0".getBytes()),
+        ByteBuffer.wrap("1.0".getBytes()));
   }
 
   @Test
@@ -176,10 +177,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, 1d)
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("11.0".getBytes())),
-        Optional.of(ByteBuffer.wrap("512.0".getBytes())),
-        Optional.of(ByteBuffer.wrap("1.0".getBytes())));
+    validateNotNull(
+        ByteBuffer.wrap("11.0".getBytes()),
+        ByteBuffer.wrap("512.0".getBytes()),
+        ByteBuffer.wrap("1.0".getBytes()));
   }
 
   @Test
@@ -191,10 +192,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, Short.valueOf("1"))
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("11".getBytes())),
-        Optional.of(ByteBuffer.wrap("127".getBytes())),
-        Optional.of(ByteBuffer.wrap("1".getBytes())));
+    validateNotNull(
+        ByteBuffer.wrap("11".getBytes()),
+        ByteBuffer.wrap("127".getBytes()),
+        ByteBuffer.wrap("1".getBytes()));
   }
 
   @Test
@@ -206,10 +207,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, 1L)
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("11".getBytes())),
-        Optional.of(ByteBuffer.wrap("512".getBytes())),
-        Optional.of(ByteBuffer.wrap("1".getBytes())));
+    validateNotNull(
+        ByteBuffer.wrap("11".getBytes()),
+        ByteBuffer.wrap("512".getBytes()),
+        ByteBuffer.wrap("1".getBytes()));
   }
 
   @Test
@@ -221,10 +222,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, LocalDateTime.parse("2025-01-31T10:45:01.123"))
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("2013-07-22 12:50:05.012300".getBytes())),
-        Optional.of(ByteBuffer.wrap("2035-01-31 10:45:01".getBytes())),
-        Optional.of(ByteBuffer.wrap("2025-01-31 10:45:01.123000".getBytes())));
+    validateNotNull(
+        ByteBuffer.wrap("2013-07-22 12:50:05.012300".getBytes()),
+        ByteBuffer.wrap("2035-01-31 10:45:01".getBytes()),
+        ByteBuffer.wrap("2025-01-31 10:45:01.123000".getBytes()));
   }
 
   @Test
@@ -236,10 +237,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, LocalDate.parse("2019-12-31"))
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("2010-01-12".getBytes())),
-        Optional.of(ByteBuffer.wrap("2019-01-31".getBytes())),
-        Optional.of(ByteBuffer.wrap("2019-12-31".getBytes())));
+    validateNotNull(
+        ByteBuffer.wrap("2010-01-12".getBytes()),
+        ByteBuffer.wrap("2019-01-31".getBytes()),
+        ByteBuffer.wrap("2019-12-31".getBytes()));
   }
 
   @Test
@@ -251,10 +252,10 @@ public class BlobParameterTest extends BaseTest {
         .bind(2, LocalTime.parse("08:00:00.123"))
         .execute()
         .blockLast();
-    validate(
-        Optional.of(ByteBuffer.wrap("18:00:00.012340".getBytes())),
-        Optional.of(ByteBuffer.wrap("08:00:00.123".getBytes())),
-        Optional.of(ByteBuffer.wrap("08:00:00.123".getBytes())));
+    validateNotNull(
+        ByteBuffer.wrap("18:00:00.012340".getBytes()),
+        ByteBuffer.wrap("08:00:00.123".getBytes()),
+        ByteBuffer.wrap("08:00:00.123".getBytes()));
   }
 
   private void validate(Optional<ByteBuffer> t1, Optional<ByteBuffer> t2, Optional<ByteBuffer> t3) {
@@ -282,6 +283,35 @@ public class BlobParameterTest extends BaseTest {
         .blockLast()
         .as(StepVerifier::create)
         .expectNext(t1, t2, t3)
+        .verifyComplete();
+  }
+
+  private void validateNotNull(ByteBuffer t1, ByteBuffer t2, ByteBuffer t3) {
+    validateNotNull(t1,0);
+    validateNotNull(t2,1);
+    validateNotNull(t3,2);
+  }
+
+  private void validateNotNull(ByteBuffer t1, int index) {
+    sharedConn
+        .createStatement("SELECT * FROM BlobParam")
+        .execute()
+        .flatMap(r -> r.map((row, metadata) -> row.get(index, Blob.class)))
+        .flatMap(Blob::stream)
+        .as(StepVerifier::create)
+        .consumeNextWith(
+            actual -> {
+              if (actual.hasArray() && t1.hasArray()) {
+                Assertions.assertArrayEquals(actual.array(), t1.array());
+              } else {
+                byte[] res = new byte[actual.remaining()];
+                actual.get(res);
+
+                byte[] exp = new byte[t1.remaining()];
+                t1.get(exp);
+                Assertions.assertArrayEquals(res, exp);
+              }
+            })
         .verifyComplete();
   }
 }

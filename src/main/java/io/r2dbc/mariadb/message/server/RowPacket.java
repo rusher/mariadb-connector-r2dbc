@@ -38,10 +38,7 @@ public final class RowPacket extends AbstractReferenceCounted implements ServerM
 
   @Override
   public void deallocate() {
-    if (raw != null) {
-      raw.release();
-      raw = null;
-    }
+    raw.release();
   }
 
   @Override

@@ -27,6 +27,8 @@ import java.util.Arrays;
 public class Ed25519FieldElement extends FieldElement {
 
   private static final byte[] ZERO = new byte[32];
+  private static final long serialVersionUID = -6927791399636167812L;
+
   /** Variable is package private for encoding. */
   final int[] t;
 

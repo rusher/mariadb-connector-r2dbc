@@ -121,6 +121,8 @@ public class ServerPacketState {
             return EofPacket.decode(sequencer, body, context, true);
           }
         }
+        return new RowPacket(body);
+
       default:
         return new RowPacket(body);
     }

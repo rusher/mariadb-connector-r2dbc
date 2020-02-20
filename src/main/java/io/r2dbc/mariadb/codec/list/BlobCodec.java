@@ -42,33 +42,7 @@ public class BlobCodec implements Codec<Blob> {
 
   @Override
   public Blob decodeText(ByteBuf buf, ColumnDefinitionPacket column, Class<? extends Blob> type) {
-
-    return new Blob() {
-      private ByteBuf buffer = buf.retainedDuplicate();
-
-      @Override
-      public Publisher<ByteBuffer> stream() {
-        if (buffer == null) {
-          throw new IllegalStateException("Data has already been consumed");
-        }
-        try {
-          return Mono.just(buffer.nioBuffer());
-        } finally {
-          buffer.release();
-          buffer = null;
-        }
-      }
-
-      @Override
-      public Publisher<Void> discard() {
-        return Mono.fromRunnable(
-            () -> {
-              if (this.buffer != null && this.buffer.refCnt() > 0) {
-                this.buffer.release();
-              }
-            });
-      }
-    };
+    return Blob.from(Mono.just(buf.nioBuffer()));
   }
 
   public boolean canEncode(Object value) {

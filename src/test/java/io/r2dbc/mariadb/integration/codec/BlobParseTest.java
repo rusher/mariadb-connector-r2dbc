@@ -18,9 +18,9 @@ package io.r2dbc.mariadb.integration.codec;
 
 import io.r2dbc.mariadb.BaseTest;
 import io.r2dbc.spi.Blob;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
@@ -29,6 +29,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 public class BlobParseTest extends BaseTest {
   @BeforeAll
@@ -42,15 +44,31 @@ public class BlobParseTest extends BaseTest {
 
   @Test
   void defaultValue() {
+    String[] expectedVals = new String[] {"diego🤘💪", "georg", "lawrin"};
+    AtomicInteger index = new AtomicInteger();
+
+    Consumer<? super ByteBuffer> consumer =
+        actual -> {
+          byte[] expected = expectedVals[index.getAndIncrement()].getBytes(StandardCharsets.UTF_8);
+          if (actual.hasArray()) {
+            Assertions.assertArrayEquals(actual.array(), expected);
+          } else {
+            byte[] res = new byte[actual.remaining()];
+            actual.get(res);
+            Assertions.assertArrayEquals(res, expected);
+          }
+        };
+
     sharedConn
         .createStatement("SELECT t1 FROM BlobTable limit 3")
         .execute()
-        .flatMap(r -> r.map((row, metadata) -> Mono.from((((Blob) row.get(0)).stream())).block()))
+        .flatMap(r -> r.map((row, metadata) -> row.get(0)))
+        .cast(Blob.class)
+        .flatMap(Blob::stream)
         .as(StepVerifier::create)
-        .expectNext(
-            ByteBuffer.wrap("diego🤘💪".getBytes(StandardCharsets.UTF_8)),
-            ByteBuffer.wrap("georg".getBytes(StandardCharsets.UTF_8)),
-            ByteBuffer.wrap("lawrin".getBytes(StandardCharsets.UTF_8)))
+        .consumeNextWith(consumer)
+        .consumeNextWith(consumer)
+        .consumeNextWith(consumer)
         .verifyComplete();
   }
 

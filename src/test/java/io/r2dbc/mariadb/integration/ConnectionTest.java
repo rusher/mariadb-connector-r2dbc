@@ -94,10 +94,12 @@ public class ConnectionTest extends BaseTest {
   @Test
   void connectTimeout() throws Exception {
     MariadbConnectionConfiguration conf =
-        TestConfiguration.defaultBuilder.clone().connectTimeout(Duration.ofSeconds(1)).build();
+        TestConfiguration.defaultBuilder.clone()
+                .connectTimeout(Duration.ofSeconds(1))
+                .build();
     MariadbConnection connection = new MariadbConnectionFactory(conf).create().block();
     consume(connection);
-    connection.close();
+    connection.close().subscribe();
   }
 
   @Test
