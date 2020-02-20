@@ -41,8 +41,7 @@ public class BigResultSetTest extends BaseTest {
     Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
 
     sharedConn
-        .createStatement(
-            "SELECT lpad(conv(floor(rand()*pow(36,8)), 10, 36), 8, 0) as rnd_str_8 FROM seq_1_to_10000")
+        .createStatement("SELECT * FROM seq_1_to_10000")
         .execute()
         .flatMap(r -> r.map((row, metadata) -> row.get(0)))
         .as(StepVerifier::create)
@@ -71,7 +70,7 @@ public class BigResultSetTest extends BaseTest {
 
   @Test
   void multiPacketRow() {
-    Assumptions.assumeTrue(checkMaxAllowedPacketMore20m(sharedConn));
+    Assumptions.assumeTrue(checkMaxAllowedPacketMore20m(sharedConn) && Boolean.parseBoolean(System.getProperty("RUN_LONG_TEST", "true")));
     final char[] array19m = new char[19000000];
     for (int i = 0; i < array19m.length; i++) {
       array19m[i] = (char) (0x30 + (i % 10));

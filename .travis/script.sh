@@ -6,6 +6,7 @@ set -e
 ###################################################################################################################
 # test different type of configuration
 ###################################################################################################################
+export PACKET=20M
 
 cmd=(mvn clean test $ADDITIONNAL_VARIABLES -DjobId=${TRAVIS_JOB_ID} \
   -DkeystorePath="$SSLCERT/client-keystore.jks" \
@@ -13,6 +14,7 @@ cmd=(mvn clean test $ADDITIONNAL_VARIABLES -DjobId=${TRAVIS_JOB_ID} \
   -DTEST_PORT=3305 \
   -DTEST_USERNAME=bob \
   -DTEST_DATABASE=test2 \
+  -DRUN_LONG_TEST=false \
   -DkeystorePassword="kspass" \
   -DserverCertificatePath="$SSLCERT/server.crt" \
   -Dkeystore2Path="$SSLCERT/fullclient-keystore.jks" \
