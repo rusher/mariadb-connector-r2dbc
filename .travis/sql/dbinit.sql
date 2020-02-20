@@ -20,7 +20,7 @@ GRANT ALL ON *.* TO 'bob'@'%' with grant option;
 CREATE USER 'boby'@'%' identified by 'hey';
 GRANT ALL ON *.* TO 'boby'@'%' with grant option;
 
-SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES, ERROR_FOR_DIVISION_BY_ZERO , NO_AUTO_CREATE_USER, NO_ENGINE_SUBSTITUTION';
+SET GLOBAL sql_mode = concat(@@sql_mode,',STRICT_TRANS_TABLES');
 
 FLUSH PRIVILEGES;
 
