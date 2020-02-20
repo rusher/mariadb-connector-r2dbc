@@ -72,19 +72,20 @@ public final class ClientImpl implements Client {
 
   private ClientImpl(Connection connection) {
     this.connection = connection;
+
+  }
+
+  public void enableInbound() {
     connection.addHandler(mariadbPacketDecoder);
     connection.addHandler(mariadbPacketEncoder);
     connection.addHandler(mariadbResponseHandler);
 
     if (logger.isTraceEnabled()) {
       connection.addHandlerFirst(
-          LoggingHandler.class.getSimpleName(),
-          new LoggingHandler(ClientImpl.class, LogLevel.TRACE));
+              LoggingHandler.class.getSimpleName(),
+              new LoggingHandler(ClientImpl.class, LogLevel.TRACE));
     }
 
-  }
-
-  public void enableInbound() {
     connection
             .inbound()
             .receiveObject()
