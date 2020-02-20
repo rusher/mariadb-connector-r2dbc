@@ -58,7 +58,7 @@ public class Ed25519PluginTest extends BaseTest {
       sharedConn
           .createStatement("GRANT ALL on *.* to verificationEd25519AuthPlugin")
           .execute()
-          .subscribe();
+          .blockLast();
     }
   }
 

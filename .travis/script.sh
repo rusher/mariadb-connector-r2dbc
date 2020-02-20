@@ -6,7 +6,6 @@ set -e
 ###################################################################################################################
 # test different type of configuration
 ###################################################################################################################
-export PACKET=20M
 
 cmd=(mvn clean test $ADDITIONNAL_VARIABLES -DjobId=${TRAVIS_JOB_ID} \
   -DkeystorePath="$SSLCERT/client-keystore.jks" \
@@ -22,8 +21,6 @@ cmd=(mvn clean test $ADDITIONNAL_VARIABLES -DjobId=${TRAVIS_JOB_ID} \
   -Dkeystore2PathP12="$SSLCERT/fullclient-keystore.p12" \
   -DrunLongTest=true \
   -DserverPublicKey="$SSLCERT/public.key")
-
-export INNODB_LOG_FILE_SIZE=$(echo ${PACKET} | cut -d'M' -f 1)0M
 
 if [ -n "$MAXSCALE_VERSION" ]; then
   ###################################################################################################################
