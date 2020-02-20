@@ -134,7 +134,7 @@ public final class AuthenticationFlow {
       @Override
       Mono<State> handle(AuthenticationFlow flow) {
         // Server send first, so no need send anything to server in here.
-        return flow.client
+        Mono<State> returnValue = flow.client
             .receive()
             .<State>handle(
                 (message, sink) -> {
@@ -169,6 +169,9 @@ public final class AuthenticationFlow {
                   }
                 })
             .next();
+
+        flow.client.enableInbound();
+        return returnValue;
       }
     },
 

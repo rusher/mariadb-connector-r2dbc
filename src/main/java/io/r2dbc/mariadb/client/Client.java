@@ -24,11 +24,11 @@ import io.r2dbc.mariadb.message.server.ServerMessage;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.locks.ReentrantLock;
-
 public interface Client {
 
   Mono<Void> close();
+
+  void enableInbound();
 
   Flux<ServerMessage> receive();
 
