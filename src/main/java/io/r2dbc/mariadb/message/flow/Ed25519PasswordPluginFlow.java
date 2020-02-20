@@ -27,6 +27,10 @@ public final class Ed25519PasswordPluginFlow implements AuthenticationPlugin {
 
   public static final String TYPE = "client_ed25519";
 
+  public Ed25519PasswordPluginFlow create() {
+    return new Ed25519PasswordPluginFlow();
+  }
+
   public String type() {
     return TYPE;
   }

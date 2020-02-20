@@ -44,6 +44,10 @@ public class Sha256PasswordPluginFlow implements AuthenticationPlugin {
   private State state = State.INIT;
   private PublicKey publicKey;
 
+  public Sha256PasswordPluginFlow create() {
+    return new Sha256PasswordPluginFlow();
+  }
+
   /**
    * Read public Key from file.
    *

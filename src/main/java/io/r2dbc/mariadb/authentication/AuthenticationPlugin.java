@@ -25,7 +25,7 @@ import io.r2dbc.spi.R2dbcException;
 public interface AuthenticationPlugin {
 
   String type();
-
+  AuthenticationPlugin create();
   ClientMessage next(
       MariadbConnectionConfiguration configuration,
       AuthSwitchPacket authSwitchPacket,

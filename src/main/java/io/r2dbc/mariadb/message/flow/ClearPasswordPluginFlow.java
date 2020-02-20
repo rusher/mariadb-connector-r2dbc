@@ -27,6 +27,10 @@ public final class ClearPasswordPluginFlow implements AuthenticationPlugin {
 
   public static final String TYPE = "mysql_clear_password";
 
+  public ClearPasswordPluginFlow create() {
+    return new ClearPasswordPluginFlow();
+  }
+
   public String type() {
     return TYPE;
   }

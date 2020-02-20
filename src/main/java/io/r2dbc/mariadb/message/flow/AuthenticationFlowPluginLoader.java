@@ -40,12 +40,7 @@ public class AuthenticationFlowPluginLoader {
 
     for (AuthenticationPlugin implClass : loader) {
       if (type.equals(implClass.type())) {
-        try {
-          return implClass.getClass().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-          throw new IllegalArgumentException(
-              String.format("Fail to instanciate new authentication plugin '%s'", type), e);
-        }
+        return implClass.create();
       }
     }
 

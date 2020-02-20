@@ -26,7 +26,9 @@ import io.r2dbc.mariadb.message.server.AuthSwitchPacket;
 public final class NativePasswordPluginFlow implements AuthenticationPlugin {
 
   public static final String TYPE = "mysql_native_password";
-
+  public NativePasswordPluginFlow create() {
+    return new NativePasswordPluginFlow();
+  }
   public String type() {
     return TYPE;
   }

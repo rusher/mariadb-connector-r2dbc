@@ -55,7 +55,8 @@ public class ErrorTest extends BaseTest {
 
   @Test
   void permissionDenied() throws Exception {
-    sharedConn.createStatement("CREATE USER userWithoutRight").execute().subscribe();
+    sharedConn.createStatement("CREATE USER userWithoutRight").execute().blockLast();
+
     MariadbConnectionConfiguration conf =
         TestConfiguration.defaultBuilder.clone().username("userWithoutRight").password("").build();
     new MariadbConnectionFactory(conf)
@@ -69,7 +70,6 @@ public class ErrorTest extends BaseTest {
                         .contains("Access denied for user 'userWithoutRight'@'%' to database")))
         .verify();
 
-    sharedConn.createStatement("CREATE USER userWithoutRight").execute().subscribe();
     conf =
         TestConfiguration.defaultBuilder
             .clone()
@@ -88,6 +88,9 @@ public class ErrorTest extends BaseTest {
 
   @Test
   void dataIntegrity() throws Exception {
+    // ensure having same kind of result for truncation
+    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
+
     sharedConn
         .createStatement("CREATE TEMPORARY TABLE dataIntegrity(t1 VARCHAR(5))")
         .execute()
