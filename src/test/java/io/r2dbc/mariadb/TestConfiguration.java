@@ -29,6 +29,7 @@ public class TestConfiguration {
           .host(host)
           .port(port)
           .username(username)
+          .password(password)
           .database(database);
 
   public static final MariadbConnectionConfiguration defaultConf = defaultBuilder.build();
