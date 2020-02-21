@@ -189,36 +189,6 @@ public class StatementTest extends BaseTest {
   }
 
   @Test
-  public void returningWrongVersion() {
-    Assumptions.assumeTrue(!isMariaDBServer() || !minVersion(10, 5, 1));
-    try {
-      sharedConn
-          .createStatement("INSERT INTO INSERT_RETURNING(test) VALUES ('test1'), ('test2')")
-          .returnGeneratedValues("id", "test")
-          .execute();
-      Assertions.fail("must have thrown exception");
-    } catch (IllegalStateException e) {
-      Assertions.assertTrue(
-          e.getMessage()
-              .contains(
-                  "Server does not support RETURNING clause (require MariaDB 10.5.1 version)"));
-    }
-
-    try {
-      sharedConn
-          .createStatement("INSERT INTO INSERT_RETURNING(test) VALUES (?)")
-          .returnGeneratedValues("id", "test")
-          .execute();
-      Assertions.fail("must have thrown exception");
-    } catch (IllegalStateException e) {
-      Assertions.assertTrue(
-          e.getMessage()
-              .contains(
-                  "Server does not support RETURNING clause (require MariaDB 10.5.1 version)"));
-    }
-  }
-
-  @Test
   public void returning() {
     Assumptions.assumeTrue(isMariaDBServer() && minVersion(10, 5, 1));
 
