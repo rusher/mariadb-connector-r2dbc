@@ -78,9 +78,7 @@ public class IntCodec implements Codec<Integer> {
       case DECIMAL:
       case DOUBLE:
       case FLOAT:
-        String str =
-            buf.readCharSequence(length, StandardCharsets.US_ASCII)
-                .toString();
+        String str = buf.readCharSequence(length, StandardCharsets.US_ASCII).toString();
         try {
           result = new BigDecimal(str).longValue();
           break;

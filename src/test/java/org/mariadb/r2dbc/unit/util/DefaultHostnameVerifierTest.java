@@ -16,9 +16,9 @@
 
 package org.mariadb.r2dbc.unit.util;
 
-import org.mariadb.r2dbc.util.DefaultHostnameVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mariadb.r2dbc.util.DefaultHostnameVerifier;
 
 import javax.net.ssl.SSLException;
 import javax.security.auth.x500.X500Principal;

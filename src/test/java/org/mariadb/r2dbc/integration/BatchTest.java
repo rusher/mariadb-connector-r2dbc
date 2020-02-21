@@ -16,10 +16,10 @@
 
 package org.mariadb.r2dbc.integration;
 
-import org.mariadb.r2dbc.BaseTest;
-import org.mariadb.r2dbc.api.MariadbBatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mariadb.r2dbc.BaseTest;
+import org.mariadb.r2dbc.api.MariadbBatch;
 import reactor.test.StepVerifier;
 
 public class BatchTest extends BaseTest {

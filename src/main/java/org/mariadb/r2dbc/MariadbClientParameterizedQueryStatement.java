@@ -37,9 +37,9 @@ final class MariadbClientParameterizedQueryStatement implements MariadbStatement
   private final Client client;
   private final String sql;
   private final ClientPrepareResult prepareResult;
+  private final MariadbConnectionConfiguration configuration;
   private Parameter<?>[] parameters;
   private List<Parameter<?>[]> batchingParameters;
-  private final MariadbConnectionConfiguration configuration;
   private String[] generatedColumns;
 
   MariadbClientParameterizedQueryStatement(

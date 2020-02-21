@@ -58,8 +58,7 @@ public class BooleanCodec implements Codec<Boolean> {
         return BitSetCodec.parseBit(buf, length).get(0);
       case VARCHAR:
       case VARSTRING:
-        String rawValue =
-            buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
+        String rawValue = buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
         return "1".equals(rawValue);
       default:
         return LongCodec.parse(buf, length) == 1L;

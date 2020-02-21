@@ -16,16 +16,16 @@
 
 package org.mariadb.r2dbc.integration;
 
+import io.r2dbc.spi.R2dbcNonTransientResourceException;
+import io.r2dbc.spi.ValidationDepth;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mariadb.r2dbc.BaseTest;
 import org.mariadb.r2dbc.MariadbConnectionConfiguration;
 import org.mariadb.r2dbc.MariadbConnectionFactory;
 import org.mariadb.r2dbc.TestConfiguration;
 import org.mariadb.r2dbc.api.MariadbConnection;
 import org.mariadb.r2dbc.api.MariadbStatement;
-import io.r2dbc.spi.R2dbcNonTransientResourceException;
-import io.r2dbc.spi.ValidationDepth;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
@@ -94,9 +94,7 @@ public class ConnectionTest extends BaseTest {
   @Test
   void connectTimeout() throws Exception {
     MariadbConnectionConfiguration conf =
-        TestConfiguration.defaultBuilder.clone()
-                .connectTimeout(Duration.ofSeconds(1))
-                .build();
+        TestConfiguration.defaultBuilder.clone().connectTimeout(Duration.ofSeconds(1)).build();
     MariadbConnection connection = new MariadbConnectionFactory(conf).create().block();
     consume(connection);
     connection.close().subscribe();

@@ -16,14 +16,14 @@
 
 package org.mariadb.r2dbc.integration.authentication;
 
-import org.mariadb.r2dbc.*;
-import org.mariadb.r2dbc.api.MariadbConnection;
-import org.mariadb.r2dbc.api.MariadbConnectionMetadata;
 import io.r2dbc.spi.R2dbcNonTransientResourceException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mariadb.r2dbc.*;
+import org.mariadb.r2dbc.api.MariadbConnection;
+import org.mariadb.r2dbc.api.MariadbConnectionMetadata;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -267,7 +267,6 @@ public class Sha256PluginTest extends BaseTest {
   public void cachingSha256PluginTestSsl() throws Exception {
     Assumptions.assumeTrue(!isMariaDBServer() && minVersion(8, 0, 0));
     Assumptions.assumeTrue(haveSsl(sharedConn));
-    MariadbConnectionMetadata meta = sharedConn.getMetadata();
 
     MariadbConnectionConfiguration conf =
         TestConfiguration.defaultBuilder
@@ -278,5 +277,7 @@ public class Sha256PluginTest extends BaseTest {
             .build();
     MariadbConnection connection = new MariadbConnectionFactory(conf).create().block();
     connection.close();
+    MariadbConnection connection3 = new MariadbConnectionFactory(conf).create().block();
+    connection3.close();
   }
 }

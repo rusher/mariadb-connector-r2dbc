@@ -16,6 +16,8 @@
 
 package org.mariadb.r2dbc.message.flow;
 
+import io.r2dbc.spi.R2dbcException;
+import io.r2dbc.spi.R2dbcNonTransientResourceException;
 import org.mariadb.r2dbc.ExceptionFactory;
 import org.mariadb.r2dbc.MariadbConnectionConfiguration;
 import org.mariadb.r2dbc.SslMode;
@@ -24,11 +26,9 @@ import org.mariadb.r2dbc.client.Client;
 import org.mariadb.r2dbc.message.client.ClientMessage;
 import org.mariadb.r2dbc.message.client.HandshakeResponse;
 import org.mariadb.r2dbc.message.client.SslRequestPacket;
+import org.mariadb.r2dbc.message.server.*;
 import org.mariadb.r2dbc.util.Assert;
 import org.mariadb.r2dbc.util.constants.Capabilities;
-import io.r2dbc.spi.R2dbcException;
-import io.r2dbc.spi.R2dbcNonTransientResourceException;
-import org.mariadb.r2dbc.message.server.*;
 import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

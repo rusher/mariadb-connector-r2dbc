@@ -16,16 +16,18 @@
 
 package org.mariadb.r2dbc.authentication;
 
+import io.r2dbc.spi.R2dbcException;
 import org.mariadb.r2dbc.MariadbConnectionConfiguration;
 import org.mariadb.r2dbc.message.client.ClientMessage;
 import org.mariadb.r2dbc.message.server.AuthMoreDataPacket;
 import org.mariadb.r2dbc.message.server.AuthSwitchPacket;
-import io.r2dbc.spi.R2dbcException;
 
 public interface AuthenticationPlugin {
 
   String type();
+
   AuthenticationPlugin create();
+
   ClientMessage next(
       MariadbConnectionConfiguration configuration,
       AuthSwitchPacket authSwitchPacket,

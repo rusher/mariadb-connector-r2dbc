@@ -91,9 +91,7 @@ public class StringCodec implements Codec<String> {
       return sb.toString();
     }
 
-    String rawValue =
-        buf.readCharSequence(length, StandardCharsets.UTF_8)
-            .toString();
+    String rawValue = buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
     if (column.isZeroFill()) {
       return zeroFillingIfNeeded(rawValue, column);
     }

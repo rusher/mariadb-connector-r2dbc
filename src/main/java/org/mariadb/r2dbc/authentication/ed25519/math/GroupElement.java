@@ -62,9 +62,8 @@ public class GroupElement implements Serializable {
    */
   GroupElement[][] precmp;
   /**
-   * Precomputed table for {@link
-   * #doubleScalarMultiplyVariableTime(GroupElement,
-   * byte[], byte[])}, filled if necessary.
+   * Precomputed table for {@link #doubleScalarMultiplyVariableTime(GroupElement, byte[], byte[])},
+   * filled if necessary.
    *
    * <p>Variable is package private only so that tests run.
    */
@@ -170,8 +169,7 @@ public class GroupElement implements Serializable {
    */
   public static GroupElement p2(
       final Curve curve, final FieldElement X, final FieldElement Y, final FieldElement Z) {
-    return new GroupElement(
-        curve, Representation.P2, X, Y, Z, null);
+    return new GroupElement(curve, Representation.P2, X, Y, Z, null);
   }
 
   /**
@@ -190,8 +188,7 @@ public class GroupElement implements Serializable {
       final FieldElement Y,
       final FieldElement Z,
       final FieldElement T) {
-    return new GroupElement(
-        curve, Representation.P3, X, Y, Z, T);
+    return new GroupElement(curve, Representation.P3, X, Y, Z, T);
   }
 
   /**
@@ -210,8 +207,7 @@ public class GroupElement implements Serializable {
       final FieldElement Y,
       final FieldElement Z,
       final FieldElement T) {
-    return new GroupElement(
-        curve, Representation.P1P1, X, Y, Z, T);
+    return new GroupElement(curve, Representation.P1P1, X, Y, Z, T);
   }
 
   /**
@@ -225,8 +221,7 @@ public class GroupElement implements Serializable {
    */
   public static GroupElement precomp(
       final Curve curve, final FieldElement ypx, final FieldElement ymx, final FieldElement xy2d) {
-    return new GroupElement(
-        curve, Representation.PRECOMP, ypx, ymx, xy2d, null);
+    return new GroupElement(curve, Representation.PRECOMP, ypx, ymx, xy2d, null);
   }
 
   /**
@@ -245,8 +240,7 @@ public class GroupElement implements Serializable {
       final FieldElement YmX,
       final FieldElement Z,
       final FieldElement T2d) {
-    return new GroupElement(
-        curve, Representation.CACHED, YpX, YmX, Z, T2d);
+    return new GroupElement(curve, Representation.CACHED, YpX, YmX, Z, T2d);
   }
 
   /**
@@ -450,8 +444,7 @@ public class GroupElement implements Serializable {
    * @param repr The representation to convert to.
    * @return A new group element in the given representation.
    */
-  private GroupElement toRep(
-      final Representation repr) {
+  private GroupElement toRep(final Representation repr) {
     switch (this.repr) {
       case P2:
         switch (repr) {
@@ -516,8 +509,7 @@ public class GroupElement implements Serializable {
    * Precomputes several tables.
    *
    * <p>The precomputed tables are used for {@link #scalarMultiply(byte[])} and {@link
-   * #doubleScalarMultiplyVariableTime(GroupElement,
-   * byte[], byte[])}.
+   * #doubleScalarMultiplyVariableTime(GroupElement, byte[], byte[])}.
    *
    * @param precomputeSingle should the matrix for scalarMultiply() be precomputed?
    */
@@ -676,8 +668,7 @@ public class GroupElement implements Serializable {
    * @param q the PRECOMP representation of the GroupElement to add.
    * @return the P1P1 representation of the result.
    */
-  private GroupElement madd(
-      GroupElement q) {
+  private GroupElement madd(GroupElement q) {
     if (this.repr != Representation.P3) {
       throw new UnsupportedOperationException();
     }
@@ -709,8 +700,7 @@ public class GroupElement implements Serializable {
    * @param q the PRECOMP representation of the GroupElement to subtract.
    * @return the P1P1 representation of the result.
    */
-  private GroupElement msub(
-      GroupElement q) {
+  private GroupElement msub(GroupElement q) {
     if (this.repr != Representation.P3) {
       throw new UnsupportedOperationException();
     }
@@ -759,8 +749,7 @@ public class GroupElement implements Serializable {
    * @param q the CACHED representation of the GroupElement to add.
    * @return the P1P1 representation of the result.
    */
-  public GroupElement add(
-      GroupElement q) {
+  public GroupElement add(GroupElement q) {
     if (this.repr != Representation.P3) {
       throw new UnsupportedOperationException();
     }
@@ -791,8 +780,7 @@ public class GroupElement implements Serializable {
    * @param q the PRECOMP representation of the GroupElement to subtract.
    * @return the P1P1 representation of the result.
    */
-  public GroupElement sub(
-      GroupElement q) {
+  public GroupElement sub(GroupElement q) {
     if (this.repr != Representation.P3) {
       throw new UnsupportedOperationException();
     }
@@ -838,8 +826,7 @@ public class GroupElement implements Serializable {
     if (!(obj instanceof GroupElement)) {
       return false;
     }
-    GroupElement ge =
-        (GroupElement) obj;
+    GroupElement ge = (GroupElement) obj;
     if (!this.repr.equals(ge.repr)) {
       try {
         ge = ge.toRep(this.repr);
@@ -895,8 +882,7 @@ public class GroupElement implements Serializable {
    * @param b in $\{0, 1\}$
    * @return $u$ if $b == 1$; this if $b == 0$. Results undefined if $b$ is not in $\{0, 1\}$.
    */
-  GroupElement cmov(
-          final GroupElement u, final int b) {
+  GroupElement cmov(final GroupElement u, final int b) {
     return precomp(curve, X.cmov(u.X, b), Y.cmov(u.Y, b), Z.cmov(u.Z, b));
   }
 
@@ -932,8 +918,7 @@ public class GroupElement implements Serializable {
             .cmov(this.precmp[pos][6], Utils.equal(babs, 7))
             .cmov(this.precmp[pos][7], Utils.equal(babs, 8));
     // -16^i |r_i| B
-    final GroupElement tminus =
-        precomp(curve, t.Y, t.X, t.Z.negate());
+    final GroupElement tminus = precomp(curve, t.Y, t.X, t.Z.negate());
     // 16^i r_i B
     return t.cmov(tminus, bnegative);
   }
@@ -954,8 +939,7 @@ public class GroupElement implements Serializable {
 
     final byte[] e = toRadix16(a);
 
-    GroupElement h =
-        this.curve.getZero(Representation.P3);
+    GroupElement h = this.curve.getZero(Representation.P3);
     synchronized (this) {
       // TODO: Get opinion from a crypto professional.
       // This should in practice never be necessary, the only point that
@@ -989,15 +973,12 @@ public class GroupElement implements Serializable {
    * @return the GroupElement
    */
   public GroupElement doubleScalarMultiplyVariableTime(
-      final GroupElement A,
-      final byte[] a,
-      final byte[] b) {
+      final GroupElement A, final byte[] a, final byte[] b) {
     // TODO-CR BR: A check that this is the base point is needed.
     final byte[] aslide = slide(a);
     final byte[] bslide = slide(b);
 
-    GroupElement r =
-        this.curve.getZero(Representation.P2);
+    GroupElement r = this.curve.getZero(Representation.P2);
 
     int i;
     for (i = 255; i >= 0; --i) {

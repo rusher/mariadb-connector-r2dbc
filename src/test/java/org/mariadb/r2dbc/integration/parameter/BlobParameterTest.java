@@ -16,12 +16,12 @@
 
 package org.mariadb.r2dbc.integration.parameter;
 
-import org.mariadb.r2dbc.BaseTest;
 import io.r2dbc.spi.Blob;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mariadb.r2dbc.BaseTest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -43,7 +43,10 @@ public class BlobParameterTest extends BaseTest {
         .execute()
         .blockLast();
     // ensure having same kind of result for truncation
-    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
+    sharedConn
+        .createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'")
+        .execute()
+        .blockLast();
   }
 
   @BeforeEach
@@ -289,9 +292,9 @@ public class BlobParameterTest extends BaseTest {
   }
 
   private void validateNotNull(ByteBuffer t1, ByteBuffer t2, ByteBuffer t3) {
-    validateNotNull(t1,0);
-    validateNotNull(t2,1);
-    validateNotNull(t3,2);
+    validateNotNull(t1, 0);
+    validateNotNull(t2, 1);
+    validateNotNull(t3, 2);
   }
 
   private void validateNotNull(ByteBuffer t1, int index) {

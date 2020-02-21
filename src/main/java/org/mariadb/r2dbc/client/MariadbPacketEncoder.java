@@ -57,7 +57,7 @@ public class MariadbPacketEncoder extends MessageToByteEncoder<ClientMessage> {
     }
 
     if (packetLength == 0xffffff) {
-      //in case last packet is full, sending an empty packet to indicate that command is complete
+      // in case last packet is full, sending an empty packet to indicate that command is complete
       out.writeMediumLE(packetLength);
       out.writeByte(msg.getSequencer().next());
     }

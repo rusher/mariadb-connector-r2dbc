@@ -51,7 +51,8 @@ public class FloatCodec implements Codec<Float> {
   }
 
   @Override
-  public Float decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Float> type) {
+  public Float decodeText(
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Float> type) {
     if (column.getDataType() == DataType.BIT) {
       return Float.valueOf(ByteCodec.parseBit(buf, length));
     }

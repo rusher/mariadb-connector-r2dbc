@@ -46,15 +46,13 @@ public abstract class FieldElement implements Serializable {
     return f.getEncoding().isNegative(this);
   }
 
-  public abstract FieldElement add(
-      FieldElement val);
+  public abstract FieldElement add(FieldElement val);
 
   public FieldElement addOne() {
     return add(f.ONE);
   }
 
-  public abstract FieldElement subtract(
-      FieldElement val);
+  public abstract FieldElement subtract(FieldElement val);
 
   public FieldElement subtractOne() {
     return subtract(f.ONE);
@@ -62,13 +60,11 @@ public abstract class FieldElement implements Serializable {
 
   public abstract FieldElement negate();
 
-  public FieldElement divide(
-      FieldElement val) {
+  public FieldElement divide(FieldElement val) {
     return multiply(val.invert());
   }
 
-  public abstract FieldElement multiply(
-      FieldElement val);
+  public abstract FieldElement multiply(FieldElement val);
 
   public abstract FieldElement square();
 
@@ -78,8 +74,7 @@ public abstract class FieldElement implements Serializable {
 
   public abstract FieldElement pow22523();
 
-  public abstract FieldElement cmov(
-          FieldElement val, final int b);
+  public abstract FieldElement cmov(FieldElement val, final int b);
 
   // Note: concrete subclasses must implement hashCode() and equals()
 }

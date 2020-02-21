@@ -16,12 +16,12 @@
 
 package org.mariadb.r2dbc.integration.parameter;
 
-import org.mariadb.r2dbc.BaseTest;
 import io.r2dbc.spi.Blob;
 import io.r2dbc.spi.R2dbcBadGrammarException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mariadb.r2dbc.BaseTest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -43,7 +43,10 @@ public class BitParameterTest extends BaseTest {
         .execute()
         .subscribe();
     // ensure having same kind of result for truncation
-    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
+    sharedConn
+        .createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'")
+        .execute()
+        .blockLast();
   }
 
   @BeforeEach

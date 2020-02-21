@@ -97,8 +97,7 @@ public class Curve implements Serializable {
     if (!(o instanceof Curve)) {
       return false;
     }
-    Curve c =
-        (Curve) o;
+    Curve c = (Curve) o;
     return f.equals(c.getField()) && d.equals(c.getD()) && I.equals(c.getI());
   }
 }

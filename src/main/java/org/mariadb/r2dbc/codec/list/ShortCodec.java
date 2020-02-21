@@ -42,7 +42,8 @@ public class ShortCodec implements Codec<Short> {
   }
 
   @Override
-  public Short decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Short> type) {
+  public Short decodeText(
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Short> type) {
     if (column.getDataType() == DataType.BIT) return (short) ByteCodec.parseBit(buf, length);
     long result = 0L;
     boolean negate = false;

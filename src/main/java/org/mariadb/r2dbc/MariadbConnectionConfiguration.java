@@ -16,10 +16,10 @@
 
 package org.mariadb.r2dbc;
 
-import org.mariadb.r2dbc.util.Assert;
-import org.mariadb.r2dbc.util.SslConfig;
 import io.r2dbc.spi.ConnectionFactoryOptions;
 import io.r2dbc.spi.IsolationLevel;
+import org.mariadb.r2dbc.util.Assert;
+import org.mariadb.r2dbc.util.SslConfig;
 import reactor.util.annotation.Nullable;
 
 import java.time.Duration;
@@ -91,23 +91,33 @@ public final class MariadbConnectionConfiguration {
     builder.database(connectionFactoryOptions.getValue(DATABASE));
 
     if (connectionFactoryOptions.hasOption(MariadbConnectionFactoryProvider.SOCKET)) {
-      builder.socket(connectionFactoryOptions.getRequiredValue(MariadbConnectionFactoryProvider.SOCKET));
+      builder.socket(
+          connectionFactoryOptions.getRequiredValue(MariadbConnectionFactoryProvider.SOCKET));
     } else {
       builder.host(connectionFactoryOptions.getRequiredValue(HOST));
     }
 
     if (connectionFactoryOptions.hasOption(MariadbConnectionFactoryProvider.ALLOW_MULTI_QUERIES)) {
-      builder.allowMultiQueries(connectionFactoryOptions.getValue(MariadbConnectionFactoryProvider.ALLOW_MULTI_QUERIES));
+      builder.allowMultiQueries(
+          connectionFactoryOptions.getValue(MariadbConnectionFactoryProvider.ALLOW_MULTI_QUERIES));
     }
 
     if (connectionFactoryOptions.hasOption(MariadbConnectionFactoryProvider.SSL_MODE)) {
-      builder.sslMode(Enum.valueOf(SslMode.class, connectionFactoryOptions.getValue(MariadbConnectionFactoryProvider.SSL_MODE)));
+      builder.sslMode(
+          Enum.valueOf(
+              SslMode.class,
+              connectionFactoryOptions.getValue(MariadbConnectionFactoryProvider.SSL_MODE)));
     }
-    builder.serverSslCert(connectionFactoryOptions.getValue(MariadbConnectionFactoryProvider.SERVER_SSL_CERT));
-    builder.clientSslCert(connectionFactoryOptions.getValue(MariadbConnectionFactoryProvider.CLIENT_SSL_CERT));
+    builder.serverSslCert(
+        connectionFactoryOptions.getValue(MariadbConnectionFactoryProvider.SERVER_SSL_CERT));
+    builder.clientSslCert(
+        connectionFactoryOptions.getValue(MariadbConnectionFactoryProvider.CLIENT_SSL_CERT));
 
     if (connectionFactoryOptions.hasOption(MariadbConnectionFactoryProvider.TLS_PROTOCOL)) {
-      String[] protocols = connectionFactoryOptions.getValue(MariadbConnectionFactoryProvider.TLS_PROTOCOL).split("[,;\\s]+");
+      String[] protocols =
+          connectionFactoryOptions
+              .getValue(MariadbConnectionFactoryProvider.TLS_PROTOCOL)
+              .split("[,;\\s]+");
       builder.tlsProtocol(protocols);
     }
     builder.password(connectionFactoryOptions.getValue(PASSWORD));
@@ -118,7 +128,8 @@ public final class MariadbConnectionConfiguration {
       builder.port(port);
     }
 
-    Map<String, String> options = connectionFactoryOptions.getValue(MariadbConnectionFactoryProvider.OPTIONS);
+    Map<String, String> options =
+        connectionFactoryOptions.getValue(MariadbConnectionFactoryProvider.OPTIONS);
     if (options != null) {
       builder.options(options);
     }
@@ -237,23 +248,35 @@ public final class MariadbConnectionConfiguration {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     MariadbConnectionConfiguration that = (MariadbConnectionConfiguration) o;
-    return port == that.port &&
-            allowMultiQueries == that.allowMultiQueries &&
-            allowPublicKeyRetrieval == that.allowPublicKeyRetrieval &&
-            Objects.equals(database, that.database) &&
-            Objects.equals(host, that.host) &&
-            Objects.equals(connectTimeout, that.connectTimeout) &&
-            Objects.equals(password, that.password) &&
-            Objects.equals(socket, that.socket) &&
-            Objects.equals(username, that.username) &&
-            Objects.equals(connectionAttributes, that.connectionAttributes) &&
-            Objects.equals(sslConfig, that.sslConfig) &&
-            Objects.equals(serverRsaPublicKeyFile, that.serverRsaPublicKeyFile);
+    return port == that.port
+        && allowMultiQueries == that.allowMultiQueries
+        && allowPublicKeyRetrieval == that.allowPublicKeyRetrieval
+        && Objects.equals(database, that.database)
+        && Objects.equals(host, that.host)
+        && Objects.equals(connectTimeout, that.connectTimeout)
+        && Objects.equals(password, that.password)
+        && Objects.equals(socket, that.socket)
+        && Objects.equals(username, that.username)
+        && Objects.equals(connectionAttributes, that.connectionAttributes)
+        && Objects.equals(sslConfig, that.sslConfig)
+        && Objects.equals(serverRsaPublicKeyFile, that.serverRsaPublicKeyFile);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(database, host, connectTimeout, password, port, socket, username, allowMultiQueries, connectionAttributes, sslConfig, serverRsaPublicKeyFile, allowPublicKeyRetrieval);
+    return Objects.hash(
+        database,
+        host,
+        connectTimeout,
+        password,
+        port,
+        socket,
+        username,
+        allowMultiQueries,
+        connectionAttributes,
+        sslConfig,
+        serverRsaPublicKeyFile,
+        allowPublicKeyRetrieval);
   }
 
   /**

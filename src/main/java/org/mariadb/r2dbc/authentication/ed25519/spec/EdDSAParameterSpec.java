@@ -91,8 +91,7 @@ public class EdDSAParameterSpec implements AlgorithmParameterSpec, Serializable 
     if (!(o instanceof EdDSAParameterSpec)) {
       return false;
     }
-    EdDSAParameterSpec s =
-        (EdDSAParameterSpec) o;
+    EdDSAParameterSpec s = (EdDSAParameterSpec) o;
     return hashAlgo.equals(s.getHashAlgorithm())
         && curve.equals(s.getCurve())
         && B.equals(s.getB());

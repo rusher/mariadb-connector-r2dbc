@@ -21,9 +21,9 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-import org.mariadb.r2dbc.SslMode;
 import io.r2dbc.spi.R2dbcNonTransientResourceException;
 import io.r2dbc.spi.R2dbcTransientResourceException;
+import org.mariadb.r2dbc.SslMode;
 
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;

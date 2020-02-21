@@ -1053,8 +1053,7 @@ public class Ed25519FieldElement extends FieldElement {
    */
   @Override
   public FieldElement cmov(FieldElement val, int b) {
-    Ed25519FieldElement that =
-        (Ed25519FieldElement) val;
+    Ed25519FieldElement that = (Ed25519FieldElement) val;
     b = -b;
     int[] result = new int[10];
     for (int i = 0; i < 10; i++) {
@@ -1063,8 +1062,7 @@ public class Ed25519FieldElement extends FieldElement {
       x &= b;
       result[i] ^= x;
     }
-    return new Ed25519FieldElement(
-        this.f, result);
+    return new Ed25519FieldElement(this.f, result);
   }
 
   @Override
@@ -1074,12 +1072,10 @@ public class Ed25519FieldElement extends FieldElement {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj
-        instanceof Ed25519FieldElement)) {
+    if (!(obj instanceof Ed25519FieldElement)) {
       return false;
     }
-    Ed25519FieldElement fe =
-        (Ed25519FieldElement) obj;
+    Ed25519FieldElement fe = (Ed25519FieldElement) obj;
     return 1 == Utils.equal(toByteArray(), fe.toByteArray());
   }
 

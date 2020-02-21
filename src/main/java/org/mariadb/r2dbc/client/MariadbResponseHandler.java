@@ -18,8 +18,8 @@ package org.mariadb.r2dbc.client;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
-import org.mariadb.r2dbc.message.server.ServerMessage;
 import io.r2dbc.spi.R2dbcNonTransientResourceException;
+import org.mariadb.r2dbc.message.server.ServerMessage;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.MonoSink;

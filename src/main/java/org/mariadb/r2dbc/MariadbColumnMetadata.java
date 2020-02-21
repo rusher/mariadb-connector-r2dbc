@@ -16,10 +16,9 @@
 
 package org.mariadb.r2dbc;
 
-import org.mariadb.r2dbc.codec.DataType;
-import org.mariadb.r2dbc.message.server.ColumnDefinitionPacket;
 import io.r2dbc.spi.ColumnMetadata;
 import io.r2dbc.spi.Nullability;
+import org.mariadb.r2dbc.message.server.ColumnDefinitionPacket;
 
 final class MariadbColumnMetadata implements ColumnMetadata {
 

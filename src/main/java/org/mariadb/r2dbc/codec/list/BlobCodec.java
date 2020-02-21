@@ -17,12 +17,12 @@
 package org.mariadb.r2dbc.codec.list;
 
 import io.netty.buffer.ByteBuf;
+import io.r2dbc.spi.Blob;
 import org.mariadb.r2dbc.client.ConnectionContext;
 import org.mariadb.r2dbc.codec.Codec;
 import org.mariadb.r2dbc.codec.DataType;
 import org.mariadb.r2dbc.message.server.ColumnDefinitionPacket;
 import org.mariadb.r2dbc.util.BufferUtils;
-import io.r2dbc.spi.Blob;
 import reactor.core.publisher.Mono;
 
 import java.util.EnumSet;
@@ -39,7 +39,8 @@ public class BlobCodec implements Codec<Blob> {
   }
 
   @Override
-  public Blob decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Blob> type) {
+  public Blob decodeText(
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Blob> type) {
     return Blob.from(Mono.just(buf.readSlice(length).nioBuffer()));
   }
 

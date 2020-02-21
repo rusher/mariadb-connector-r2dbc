@@ -96,8 +96,7 @@ public class Field implements Serializable {
     if (!(obj instanceof Field)) {
       return false;
     }
-    Field f =
-        (Field) obj;
+    Field f = (Field) obj;
     return b == f.b && q.equals(f.q);
   }
 }

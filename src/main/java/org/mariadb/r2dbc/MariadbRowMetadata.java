@@ -16,9 +16,9 @@
 
 package org.mariadb.r2dbc;
 
+import io.r2dbc.spi.RowMetadata;
 import org.mariadb.r2dbc.message.server.ColumnDefinitionPacket;
 import org.mariadb.r2dbc.util.Assert;
-import io.r2dbc.spi.RowMetadata;
 
 import java.util.*;
 

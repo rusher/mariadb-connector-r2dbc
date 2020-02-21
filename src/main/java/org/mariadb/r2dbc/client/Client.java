@@ -33,7 +33,7 @@ public interface Client {
   Flux<ServerMessage> sendCommand(ClientMessage requests);
 
   Mono<Void> sendSslRequest(
-          SslRequestPacket sslRequest, MariadbConnectionConfiguration configuration);
+      SslRequestPacket sslRequest, MariadbConnectionConfiguration configuration);
 
   ClientImpl.LockAction getLockAction();
 

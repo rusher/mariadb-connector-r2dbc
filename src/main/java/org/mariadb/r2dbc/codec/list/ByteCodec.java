@@ -44,7 +44,8 @@ public class ByteCodec implements Codec<Byte> {
   }
 
   @Override
-  public Byte decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Byte> type) {
+  public Byte decodeText(
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Byte> type) {
     if (length == 0) {
       throw new IllegalArgumentException(
           String.format("Unexpected datatype %s", column.getDataType()));

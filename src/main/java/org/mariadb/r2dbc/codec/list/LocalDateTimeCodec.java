@@ -23,7 +23,6 @@ import org.mariadb.r2dbc.codec.DataType;
 import org.mariadb.r2dbc.message.server.ColumnDefinitionPacket;
 import org.mariadb.r2dbc.util.BufferUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 
@@ -52,10 +51,7 @@ public class LocalDateTimeCodec implements Codec<LocalDateTime> {
       }
       if (b < '0' || b > '9') {
         buf.skipBytes(length - idx);
-        throw new IllegalArgumentException(
-            String.format(
-                "Illegal date format: value %s",
-                b));
+        throw new IllegalArgumentException(String.format("Illegal date format: value %s", b));
       }
       if (nanoLen >= 0) nanoLen++;
       timestampsPart[partIdx] = timestampsPart[partIdx] * 10 + b - 48;

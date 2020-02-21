@@ -17,11 +17,11 @@
 package org.mariadb.r2dbc.util;
 
 import io.netty.buffer.ByteBuf;
-import org.mariadb.r2dbc.client.ConnectionContext;
-import org.mariadb.r2dbc.util.constants.ServerStatus;
 import io.r2dbc.spi.Blob;
 import io.r2dbc.spi.Clob;
 import io.r2dbc.spi.R2dbcNonTransientResourceException;
+import org.mariadb.r2dbc.client.ConnectionContext;
+import org.mariadb.r2dbc.util.constants.ServerStatus;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;

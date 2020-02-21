@@ -23,6 +23,8 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import io.r2dbc.spi.R2dbcNonTransientResourceException;
+import io.r2dbc.spi.R2dbcTransientResourceException;
 import org.mariadb.r2dbc.ExceptionFactory;
 import org.mariadb.r2dbc.MariadbConnectionConfiguration;
 import org.mariadb.r2dbc.message.client.ClientMessage;
@@ -32,8 +34,6 @@ import org.mariadb.r2dbc.message.client.SslRequestPacket;
 import org.mariadb.r2dbc.message.server.InitialHandshakePacket;
 import org.mariadb.r2dbc.message.server.ServerMessage;
 import org.mariadb.r2dbc.util.constants.ServerStatus;
-import io.r2dbc.spi.R2dbcNonTransientResourceException;
-import io.r2dbc.spi.R2dbcTransientResourceException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
@@ -139,7 +139,7 @@ public final class ClientImpl implements Client {
 
   @Override
   public Mono<Void> sendSslRequest(
-          SslRequestPacket sslRequest, MariadbConnectionConfiguration configuration) {
+      SslRequestPacket sslRequest, MariadbConnectionConfiguration configuration) {
     CompletableFuture<Void> result = new CompletableFuture<>();
     try {
       SSLEngine engine =
@@ -212,6 +212,65 @@ public final class ClientImpl implements Client {
 
   public LockAction getLockAction() {
     return new LockAction();
+  }
+
+  /**
+   * Get current server autocommit.
+   *
+   * @return autocommit current server value.
+   */
+  @Override
+  public boolean isAutoCommit() {
+    return (this.context.getServerStatus() & ServerStatus.AUTOCOMMIT) > 0;
+  }
+
+  @Override
+  public boolean noBackslashEscapes() {
+    return (this.context.getServerStatus() & ServerStatus.NO_BACKSLASH_ESCAPES) > 0;
+  }
+
+  @Override
+  public ServerVersion getVersion() {
+    return (this.context != null) ? this.context.getVersion() : ServerVersion.UNKNOWN_VERSION;
+  }
+
+  @Override
+  public boolean isConnected() {
+    if (this.isClosed.get()) {
+      return false;
+    }
+
+    Channel channel = this.connection.channel();
+    return channel.isOpen();
+  }
+
+  private void handleClose() {
+    if (this.isClosed.compareAndSet(false, true)) {
+      clearWaitingListWithError(
+          new R2dbcNonTransientResourceException("Connection unexpectedly closed"));
+
+    } else {
+      clearWaitingListWithError(new R2dbcNonTransientResourceException("Connection closed"));
+    }
+  }
+
+  private void clearWaitingListWithError(Throwable exception) {
+    MonoSink<Flux<ServerMessage>> sink;
+    while ((sink = this.responseReceivers.poll()) != null) {
+      sink.error(exception);
+    }
+  }
+
+  @Override
+  public String toString() {
+    return "Client{isClosed=" + isClosed + ", context=" + context + '}';
+  }
+
+  @SuppressWarnings("serial")
+  static class MariadbConnectionException extends R2dbcNonTransientResourceException {
+    public MariadbConnectionException(Throwable cause) {
+      super(cause);
+    }
   }
 
   public class LockAction implements AutoCloseable {
@@ -295,65 +354,6 @@ public final class ClientImpl implements Client {
     @Override
     public void close() {
       lock.unlock();
-    }
-  }
-
-  /**
-   * Get current server autocommit.
-   *
-   * @return autocommit current server value.
-   */
-  @Override
-  public boolean isAutoCommit() {
-    return (this.context.getServerStatus() & ServerStatus.AUTOCOMMIT) > 0;
-  }
-
-  @Override
-  public boolean noBackslashEscapes() {
-    return (this.context.getServerStatus() & ServerStatus.NO_BACKSLASH_ESCAPES) > 0;
-  }
-
-  @Override
-  public ServerVersion getVersion() {
-    return (this.context != null) ? this.context.getVersion() : ServerVersion.UNKNOWN_VERSION;
-  }
-
-  @Override
-  public boolean isConnected() {
-    if (this.isClosed.get()) {
-      return false;
-    }
-
-    Channel channel = this.connection.channel();
-    return channel.isOpen();
-  }
-
-  private void handleClose() {
-    if (this.isClosed.compareAndSet(false, true)) {
-      clearWaitingListWithError(
-          new R2dbcNonTransientResourceException("Connection unexpectedly closed"));
-
-    } else {
-      clearWaitingListWithError(new R2dbcNonTransientResourceException("Connection closed"));
-    }
-  }
-
-  private void clearWaitingListWithError(Throwable exception) {
-    MonoSink<Flux<ServerMessage>> sink;
-    while ((sink = this.responseReceivers.poll()) != null) {
-      sink.error(exception);
-    }
-  }
-
-  @Override
-  public String toString() {
-    return "Client{isClosed=" + isClosed + ", context=" + context + '}';
-  }
-
-  @SuppressWarnings("serial")
-  static class MariadbConnectionException extends R2dbcNonTransientResourceException {
-    public MariadbConnectionException(Throwable cause) {
-      super(cause);
     }
   }
 }

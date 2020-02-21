@@ -17,13 +17,13 @@
 package org.mariadb.r2dbc.message.server;
 
 import io.netty.buffer.ByteBuf;
+import io.r2dbc.spi.Nullability;
 import org.mariadb.r2dbc.client.ConnectionContext;
 import org.mariadb.r2dbc.codec.Codec;
 import org.mariadb.r2dbc.codec.DataType;
 import org.mariadb.r2dbc.codec.list.*;
 import org.mariadb.r2dbc.util.BufferUtils;
 import org.mariadb.r2dbc.util.constants.ColumnFlags;
-import io.r2dbc.spi.Nullability;
 import reactor.util.Logger;
 import reactor.util.Loggers;
 
@@ -113,10 +113,6 @@ public final class ColumnDefinitionPacket implements ServerMessage {
     this.flags = ColumnFlags.PRIMARY_KEY;
   }
 
-  public static ColumnDefinitionPacket fromGeneratedId(String name) {
-    return new ColumnDefinitionPacket(name);
-  }
-
   public ColumnDefinitionPacket(Sequencer sequencer, ByteBuf buf, ConnectionContext context) {
     this.meta = new byte[buf.readableBytes() - 12];
     buf.readBytes(meta);
@@ -125,6 +121,10 @@ public final class ColumnDefinitionPacket implements ServerMessage {
     this.dataType = DataType.fromServer(buf.readUnsignedByte(), charset);
     this.flags = buf.readShortLE();
     this.decimals = buf.readByte();
+  }
+
+  public static ColumnDefinitionPacket fromGeneratedId(String name) {
+    return new ColumnDefinitionPacket(name);
   }
 
   private String getString(int idx) {

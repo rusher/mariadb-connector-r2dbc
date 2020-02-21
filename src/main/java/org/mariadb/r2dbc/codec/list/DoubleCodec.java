@@ -55,7 +55,7 @@ public class DoubleCodec implements Codec<Double> {
   public Double decodeText(
       ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Double> type) {
     if (column.getDataType() == DataType.BIT) {
-      return Double.valueOf(ByteCodec.parseBit(buf,length));
+      return Double.valueOf(ByteCodec.parseBit(buf, length));
     }
     String str = buf.readCharSequence(length, StandardCharsets.US_ASCII).toString();
     try {

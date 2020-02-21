@@ -69,7 +69,8 @@ public class LongCodec implements Codec<Long> {
   }
 
   @Override
-  public Long decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Long> type) {
+  public Long decodeText(
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Long> type) {
     switch (column.getDataType()) {
       case BIT:
         return ByteCodec.parseBit(buf, length);
@@ -81,8 +82,7 @@ public class LongCodec implements Codec<Long> {
         return parse(buf, length);
 
       case BIGINT:
-        String str =
-            buf.readCharSequence(length, StandardCharsets.US_ASCII).toString();
+        String str = buf.readCharSequence(length, StandardCharsets.US_ASCII).toString();
         return new BigInteger(str).longValueExact();
     }
     buf.skipBytes(length);

@@ -16,10 +16,10 @@
 
 package org.mariadb.r2dbc;
 
-import org.mariadb.r2dbc.util.Assert;
 import io.r2dbc.spi.ConnectionFactoryOptions;
 import io.r2dbc.spi.ConnectionFactoryProvider;
 import io.r2dbc.spi.Option;
+import org.mariadb.r2dbc.util.Assert;
 
 import java.util.Map;
 

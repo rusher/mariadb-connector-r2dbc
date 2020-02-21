@@ -17,11 +17,11 @@
 package org.mariadb.r2dbc;
 
 import io.netty.channel.unix.DomainSocketAddress;
+import io.r2dbc.spi.*;
 import org.mariadb.r2dbc.client.Client;
 import org.mariadb.r2dbc.client.ClientImpl;
 import org.mariadb.r2dbc.message.flow.AuthenticationFlow;
 import org.mariadb.r2dbc.util.Assert;
-import io.r2dbc.spi.*;
 import reactor.core.publisher.Mono;
 import reactor.netty.resources.ConnectionProvider;
 import reactor.util.annotation.Nullable;
@@ -75,8 +75,10 @@ public final class MariadbConnectionFactory implements ConnectionFactory {
                     .map(it -> new MariadbConnection(client, it, configuration))
                     .onErrorResume(throwable -> this.closeWithError(client, throwable));
               } else {
-                return Mono.just(new MariadbConnection(client, configuration.getIsolationLevel(), configuration))
-                        .onErrorResume(throwable -> this.closeWithError(client, throwable));
+                return Mono.just(
+                        new MariadbConnection(
+                            client, configuration.getIsolationLevel(), configuration))
+                    .onErrorResume(throwable -> this.closeWithError(client, throwable));
               }
             })
         .onErrorMap(this::cannotConnect);

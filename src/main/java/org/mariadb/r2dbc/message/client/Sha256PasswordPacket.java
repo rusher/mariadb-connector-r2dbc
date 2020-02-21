@@ -18,10 +18,10 @@ package org.mariadb.r2dbc.message.client;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import org.mariadb.r2dbc.client.ConnectionContext;
-import org.mariadb.r2dbc.message.server.Sequencer;
 import io.r2dbc.spi.R2dbcException;
 import io.r2dbc.spi.R2dbcPermissionDeniedException;
+import org.mariadb.r2dbc.client.ConnectionContext;
+import org.mariadb.r2dbc.message.server.Sequencer;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;

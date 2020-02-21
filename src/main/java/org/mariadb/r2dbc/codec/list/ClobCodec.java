@@ -17,12 +17,12 @@
 package org.mariadb.r2dbc.codec.list;
 
 import io.netty.buffer.ByteBuf;
+import io.r2dbc.spi.Clob;
 import org.mariadb.r2dbc.client.ConnectionContext;
 import org.mariadb.r2dbc.codec.Codec;
 import org.mariadb.r2dbc.codec.DataType;
 import org.mariadb.r2dbc.message.server.ColumnDefinitionPacket;
 import org.mariadb.r2dbc.util.BufferUtils;
-import io.r2dbc.spi.Clob;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
@@ -44,7 +44,8 @@ public class ClobCodec implements Codec<Clob> {
   }
 
   @Override
-  public Clob decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Clob> type) {
+  public Clob decodeText(
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Clob> type) {
     String rawValue = buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
     return Clob.from(Mono.just(rawValue));
   }

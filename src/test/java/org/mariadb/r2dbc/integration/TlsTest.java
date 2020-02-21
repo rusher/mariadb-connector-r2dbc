@@ -16,13 +16,13 @@
 
 package org.mariadb.r2dbc.integration;
 
-import org.mariadb.r2dbc.*;
-import org.mariadb.r2dbc.api.MariadbConnection;
-import org.mariadb.r2dbc.api.MariadbConnectionMetadata;
 import io.r2dbc.spi.R2dbcNonTransientException;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mariadb.r2dbc.*;
+import org.mariadb.r2dbc.api.MariadbConnection;
+import org.mariadb.r2dbc.api.MariadbConnectionMetadata;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -190,26 +190,26 @@ public class TlsTest extends BaseTest {
             .build();
     if (!conf.getHost().equals("mariadb.example.com")) {
       new MariadbConnectionFactory(conf)
-              .create()
-              .as(StepVerifier::create)
-              .expectErrorMatches(
-                      throwable ->
-                              throwable instanceof R2dbcNonTransientException
-                                      && throwable.getMessage().contains("SSL hostname verification failed "))
-              .verify();
+          .create()
+          .as(StepVerifier::create)
+          .expectErrorMatches(
+              throwable ->
+                  throwable instanceof R2dbcNonTransientException
+                      && throwable.getMessage().contains("SSL hostname verification failed "))
+          .verify();
     } else {
       MariadbConnection connection = new MariadbConnectionFactory(conf).create().block();
       connection
-              .createStatement("SHOW STATUS like 'Ssl_version'")
-              .execute()
-              .flatMap(r -> r.map((row, metadata) -> row.get(1)))
-              .as(StepVerifier::create)
-              .expectNextMatches(
-                      val -> {
-                        String[] values = {"TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3"};
-                        return Arrays.stream(values).anyMatch(val::equals);
-                      })
-              .verifyComplete();
+          .createStatement("SHOW STATUS like 'Ssl_version'")
+          .execute()
+          .flatMap(r -> r.map((row, metadata) -> row.get(1)))
+          .as(StepVerifier::create)
+          .expectNextMatches(
+              val -> {
+                String[] values = {"TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3"};
+                return Arrays.stream(values).anyMatch(val::equals);
+              })
+          .verifyComplete();
       connection.close().block();
     }
   }

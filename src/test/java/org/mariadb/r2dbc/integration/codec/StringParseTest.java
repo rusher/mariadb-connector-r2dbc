@@ -16,10 +16,10 @@
 
 package org.mariadb.r2dbc.integration.codec;
 
-import org.mariadb.r2dbc.BaseTest;
 import io.r2dbc.spi.Clob;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mariadb.r2dbc.BaseTest;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -41,8 +41,10 @@ public class StringParseTest extends BaseTest {
         .execute()
         .blockLast();
     // ensure having same kind of result for truncation
-    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
-
+    sharedConn
+        .createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'")
+        .execute()
+        .blockLast();
   }
 
   @Test

@@ -7,8 +7,6 @@ set -e
 # test different type of configuration
 ###################################################################################################################
 
-
-
 if [ -n "$BENCHMARK" ]; then
   cmd=(mvn clean package -P bench -Dmaven.test.skip)
 else
@@ -28,7 +26,6 @@ else
     -DrunLongTest=true \
     -DserverPublicKey="$SSLCERT/public.key")
 fi
-
 
 if [ -n "$MAXSCALE_VERSION" ]; then
   ###################################################################################################################
@@ -84,8 +81,8 @@ fi
 
 if [ -n "$BENCHMARK" ]; then
   java -DTEST_HOST=mariadb.example.com \
-    -DTEST_PORT=3305 \
-    -DTEST_USERNAME=bob \
-    -DTEST_DATABASE=test2 \
-    -jar target/benchmarks.jar
+  -DTEST_PORT=3305 \
+  -DTEST_USERNAME=bob \
+  -DTEST_DATABASE=test2 \
+  -jar target/benchmarks.jar
 fi

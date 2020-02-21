@@ -16,12 +16,12 @@
 
 package org.mariadb.r2dbc;
 
-import org.mariadb.r2dbc.api.MariadbConnection;
-import org.mariadb.r2dbc.api.MariadbConnectionMetadata;
 import io.r2dbc.spi.ValidationDepth;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.mariadb.r2dbc.api.MariadbConnection;
+import org.mariadb.r2dbc.api.MariadbConnectionMetadata;
 import reactor.test.StepVerifier;
 
 public class BaseTest {

@@ -16,9 +16,9 @@
 
 package org.mariadb.r2dbc.integration.codec;
 
-import org.mariadb.r2dbc.BaseTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mariadb.r2dbc.BaseTest;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
@@ -69,8 +69,10 @@ public class DecimalParseTest extends BaseTest {
                         .equals("No decoder for type java.lang.Boolean and column type DECIMAL"))
         .verify();
     // ensure having same kind of result for truncation
-    sharedConn.createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'").execute().blockLast();
-
+    sharedConn
+        .createStatement("SET @@sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'")
+        .execute()
+        .blockLast();
   }
 
   @Test

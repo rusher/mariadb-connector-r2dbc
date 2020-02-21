@@ -16,9 +16,9 @@
 
 package org.mariadb.r2dbc.integration;
 
-import org.mariadb.r2dbc.BaseTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mariadb.r2dbc.BaseTest;
 import reactor.test.StepVerifier;
 
 import java.util.Random;

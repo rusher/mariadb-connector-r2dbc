@@ -16,14 +16,14 @@
 
 package org.mariadb.r2dbc;
 
+import io.r2dbc.spi.IsolationLevel;
+import io.r2dbc.spi.ValidationDepth;
 import org.mariadb.r2dbc.api.MariadbStatement;
 import org.mariadb.r2dbc.client.Client;
 import org.mariadb.r2dbc.client.ClientImpl;
 import org.mariadb.r2dbc.message.client.PingPacket;
 import org.mariadb.r2dbc.message.client.QueryPacket;
 import org.mariadb.r2dbc.util.Assert;
-import io.r2dbc.spi.IsolationLevel;
-import io.r2dbc.spi.ValidationDepth;
 import reactor.core.publisher.Mono;
 import reactor.util.Logger;
 import reactor.util.Loggers;

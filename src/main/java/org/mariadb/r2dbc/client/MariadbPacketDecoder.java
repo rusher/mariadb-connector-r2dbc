@@ -34,13 +34,11 @@ public class MariadbPacketDecoder extends ByteToMessageDecoder {
   private volatile CompositeByteBuf multipart;
   private AtomicBoolean isMultipart = new AtomicBoolean();
 
-
   @Override
   protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
     while (buf.readableBytes() > 4) {
       if (buf.readableBytes() < 4) return;
       int length = buf.getUnsignedMediumLE(buf.readerIndex());
-
 
       if (buf.readableBytes() < length + 4) return;
 
@@ -54,7 +52,6 @@ public class MariadbPacketDecoder extends ByteToMessageDecoder {
         multipart.addComponent(true, buf.readRetainedSlice(length));
         continue;
       }
-
 
       if (isMultipart.get()) {
         // last part of multipart packet

@@ -74,7 +74,13 @@ final class MariadbBatch implements org.mariadb.r2dbc.api.MariadbBatch {
           .windowUntil(it -> it.resultSetEnd())
           .map(
               dataRow ->
-                  new org.mariadb.r2dbc.MariadbResult(true, dataRow, ExceptionFactory.INSTANCE, null, client.getVersion().isMariaDBServer() && client.getVersion().versionGreaterOrEqual(10, 5, 1)));
+                  new org.mariadb.r2dbc.MariadbResult(
+                      true,
+                      dataRow,
+                      ExceptionFactory.INSTANCE,
+                      null,
+                      client.getVersion().isMariaDBServer()
+                          && client.getVersion().versionGreaterOrEqual(10, 5, 1)));
     }
   }
 

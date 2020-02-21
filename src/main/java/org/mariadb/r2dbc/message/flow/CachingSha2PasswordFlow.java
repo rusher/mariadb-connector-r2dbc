@@ -16,13 +16,13 @@
 
 package org.mariadb.r2dbc.message.flow;
 
+import io.r2dbc.spi.R2dbcException;
+import io.r2dbc.spi.R2dbcNonTransientResourceException;
 import org.mariadb.r2dbc.MariadbConnectionConfiguration;
 import org.mariadb.r2dbc.SslMode;
 import org.mariadb.r2dbc.message.client.*;
 import org.mariadb.r2dbc.message.server.AuthMoreDataPacket;
 import org.mariadb.r2dbc.message.server.AuthSwitchPacket;
-import io.r2dbc.spi.R2dbcException;
-import io.r2dbc.spi.R2dbcNonTransientResourceException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -48,6 +48,8 @@ public final class CachingSha2PasswordFlow extends Sha256PasswordPluginFlow {
     if (password == null || password.length() == 0) {
       return new byte[0];
     }
+    byte[] truncatedSeed = new byte[seed.length - 1];
+    System.arraycopy(seed, 0, truncatedSeed, 0, seed.length - 1);
     try {
       final MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
       byte[] bytePwd = password.toString().getBytes(StandardCharsets.UTF_8);
@@ -59,7 +61,7 @@ public final class CachingSha2PasswordFlow extends Sha256PasswordPluginFlow {
       messageDigest.reset();
 
       messageDigest.update(stage2);
-      messageDigest.update(seed);
+      messageDigest.update(truncatedSeed);
 
       final byte[] digest = messageDigest.digest();
       final byte[] returnBytes = new byte[digest.length];
@@ -70,6 +72,10 @@ public final class CachingSha2PasswordFlow extends Sha256PasswordPluginFlow {
     } catch (NoSuchAlgorithmException e) {
       throw new RuntimeException("Could not use SHA-256, failing", e);
     }
+  }
+
+  public CachingSha2PasswordFlow create() {
+    return new CachingSha2PasswordFlow();
   }
 
   public String type() {

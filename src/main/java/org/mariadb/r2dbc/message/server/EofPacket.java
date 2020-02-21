@@ -54,7 +54,7 @@ public class EofPacket implements ServerMessage {
         serverStatus,
         warningCount,
         resultSetEnd,
-            resultSetEnd && (serverStatus & ServerStatus.MORE_RESULTS_EXISTS) == 0);
+        resultSetEnd && (serverStatus & ServerStatus.MORE_RESULTS_EXISTS) == 0);
   }
 
   public short getServerStatus() {

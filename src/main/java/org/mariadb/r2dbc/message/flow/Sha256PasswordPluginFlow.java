@@ -17,6 +17,8 @@
 package org.mariadb.r2dbc.message.flow;
 
 import io.netty.buffer.ByteBuf;
+import io.r2dbc.spi.R2dbcException;
+import io.r2dbc.spi.R2dbcNonTransientResourceException;
 import org.mariadb.r2dbc.MariadbConnectionConfiguration;
 import org.mariadb.r2dbc.SslMode;
 import org.mariadb.r2dbc.authentication.AuthenticationPlugin;
@@ -26,8 +28,6 @@ import org.mariadb.r2dbc.message.client.RsaPublicKeyRequestPacket;
 import org.mariadb.r2dbc.message.client.Sha256PasswordPacket;
 import org.mariadb.r2dbc.message.server.AuthMoreDataPacket;
 import org.mariadb.r2dbc.message.server.AuthSwitchPacket;
-import io.r2dbc.spi.R2dbcException;
-import io.r2dbc.spi.R2dbcNonTransientResourceException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,10 +42,6 @@ public class Sha256PasswordPluginFlow implements AuthenticationPlugin {
   public static final String TYPE = "sha256_password";
   private State state = State.INIT;
   private PublicKey publicKey;
-
-  public Sha256PasswordPluginFlow create() {
-    return new Sha256PasswordPluginFlow();
-  }
 
   /**
    * Read public Key from file.
@@ -106,6 +102,10 @@ public class Sha256PasswordPluginFlow implements AuthenticationPlugin {
     byte[] key = new byte[buf.readableBytes()];
     buf.readBytes(key);
     return generatePublicKey(key);
+  }
+
+  public Sha256PasswordPluginFlow create() {
+    return new Sha256PasswordPluginFlow();
   }
 
   public String type() {

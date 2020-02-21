@@ -37,7 +37,8 @@ public class TinyIntCodec implements Codec<Byte> {
   }
 
   @Override
-  public Byte decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Byte> type) {
+  public Byte decodeText(
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Byte> type) {
     long result = 0;
     boolean negate = false;
     int idx = 0;
