@@ -6,16 +6,17 @@
 
 # MariaDB R2DBC connector
 
-[![npm package][npm-image]][npm-url] 
+[![Maven Central][maven-image]][maven-url]
 [![Linux Build][travis-image]][travis-url]
 [![Windows status][appveyor-image]][appveyor-url]
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License][license-image]][license-url]
 [![codecov][codecov-image]][codecov-url]
 
 **Non-blocking MariaDB and MySQL client.**
 
 MariaDB and MySQL client, 100% Java, compatible with Java8+.
-Driver permit ed25519, PAM authentication that comes with MariaDB. 
+- Driver permits ed25519, PAM authentication that comes with MariaDB.
+- use MariaDB 10.5 returning fonction to permit Statement.returnGeneratedValues 
 
 ## Quick Start
 
@@ -83,11 +84,11 @@ To file an issue or follow the development, see [JIRA](https://jira.mariadb.org/
 
 [travis-image]:https://travis-ci.org/mariadb-corporation/mariadb-connector-nodejs.svg?branch=master
 [travis-url]:https://travis-ci.org/mariadb-corporation/mariadb-connector-nodejs
-[npm-image]:https://img.shields.io/npm/v/mariadb.svg
-[npm-url]:http://npmjs.org/package/mariadb
+[maven-image]:https://maven-badges.herokuapp.com/maven-central/org.mariadb/r2dbc-mariadb/badge.svg
+[maven-url]:https://maven-badges.herokuapp.com/maven-central/org.mariadb/r2dbc-mariadb
 [appveyor-image]:https://ci.appveyor.com/api/projects/status/558kpv0j1r545pgq/branch/master?svg=true
 [appveyor-url]:https://ci.appveyor.com/project/rusher/mariadb-connector-nodejs-w8k25
-[licence-image]:https://img.shields.io/badge/license-GNU%20LGPL%20version%202.1-green.svg?style=flat-square
-[licence-url]:http://opensource.org/licenses/LGPL-2.1
+[license-image]:https://img.shields.io/badge/License-Apache%202.0-blue.svg
+[license-url]:https://opensource.org/licenses/Apache-2.0
 [codecov-image]:https://codecov.io/gh/mariadb-corporation/mariadb-connector-nodejs/branch/master/graph/badge.svg
 [codecov-url]:https://codecov.io/gh/mariadb-corporation/mariadb-connector-nodejs

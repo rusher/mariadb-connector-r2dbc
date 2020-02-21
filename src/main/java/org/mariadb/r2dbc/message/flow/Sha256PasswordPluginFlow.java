@@ -35,7 +35,6 @@ import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import java.sql.SQLException;
 import java.util.Base64;
 
 public class Sha256PasswordPluginFlow implements AuthenticationPlugin {
@@ -53,7 +52,7 @@ public class Sha256PasswordPluginFlow implements AuthenticationPlugin {
    *
    * @param serverRsaPublicKeyFile RSA public key file
    * @return public key
-   * @throws SQLException if cannot read file or file content is not a public key.
+   * @throws R2dbcException if cannot read file or file content is not a public key.
    */
   public static PublicKey readPublicKeyFromFile(String serverRsaPublicKeyFile)
       throws R2dbcException {
@@ -76,7 +75,7 @@ public class Sha256PasswordPluginFlow implements AuthenticationPlugin {
    *
    * @param publicKeyBytes public key bytes value
    * @return public key
-   * @throws SQLException if key cannot be parsed
+   * @throws R2dbcException if key cannot be parsed
    */
   public static PublicKey generatePublicKey(byte[] publicKeyBytes) throws R2dbcException {
     try {

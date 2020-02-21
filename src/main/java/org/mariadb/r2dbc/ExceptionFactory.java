@@ -34,14 +34,22 @@ public final class ExceptionFactory {
     return new ExceptionFactory(sql);
   }
 
-  public static R2dbcException createException(ErrorPacket error, String sql) {
+  public R2dbcException createException(String message, String sqlState, int errorCode) {
+    return ExceptionFactory.createException(message, sqlState, errorCode, this.sql);
+  }
 
-    if ("70100".equals(error.getSqlState())) { // ER_QUERY_INTERRUPTED
+  public static R2dbcException createException(ErrorPacket error, String sql) {
+    return createException(error.getMessage(), error.getSqlState(), error.getErrorCode(), sql);
+  }
+
+  public static R2dbcException createException(String message, String sqlState, int errorCode, String sql) {
+
+    if ("70100".equals(sqlState)) { // ER_QUERY_INTERRUPTED
       return new R2dbcTimeoutException(
-          error.getMessage(), error.getSqlState(), error.getErrorCode());
+          message, sqlState, errorCode);
     }
 
-    String sqlClass = error.getSqlState().substring(0, 2);
+    String sqlClass = sqlState.substring(0, 2);
     switch (sqlClass) {
       case "0A":
       case "22":
@@ -51,25 +59,25 @@ public final class ExceptionFactory {
       case "42":
       case "XA":
         return new R2dbcBadGrammarException(
-            error.getMessage(), error.getSqlState(), error.getErrorCode(), sql);
+            message, sqlState, errorCode, sql);
       case "25":
       case "28":
         return new R2dbcPermissionDeniedException(
-            error.getMessage(), error.getSqlState(), error.getErrorCode());
+            message, sqlState, errorCode);
       case "21":
       case "23":
         return new R2dbcDataIntegrityViolationException(
-            error.getMessage(), error.getSqlState(), error.getErrorCode());
+            message, sqlState, errorCode);
       case "08":
         return new R2dbcNonTransientResourceException(
-            error.getMessage(), error.getSqlState(), error.getErrorCode());
+            message, sqlState, errorCode);
       case "40":
         return new R2dbcRollbackException(
-            error.getMessage(), error.getSqlState(), error.getErrorCode());
+            message, sqlState, errorCode);
     }
 
     return new R2dbcTransientResourceException(
-        error.getMessage(), error.getSqlState(), error.getErrorCode());
+        message, sqlState, errorCode);
   }
 
   public R2dbcException from(ErrorPacket err) {

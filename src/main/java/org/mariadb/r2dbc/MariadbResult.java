@@ -17,14 +17,16 @@
 package org.mariadb.r2dbc;
 
 import io.netty.buffer.ByteBuf;
-import org.mariadb.r2dbc.codec.RowDecoder;
-import org.mariadb.r2dbc.codec.TextRowDecoder;
+import io.netty.buffer.Unpooled;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import org.mariadb.r2dbc.codec.RowDecoder;
+import org.mariadb.r2dbc.codec.TextRowDecoder;
 import org.mariadb.r2dbc.message.server.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.util.function.BiFunction;
 
 final class MariadbResult implements org.mariadb.r2dbc.api.MariadbResult {
@@ -32,16 +34,26 @@ final class MariadbResult implements org.mariadb.r2dbc.api.MariadbResult {
   private final Flux<ServerMessage> dataRows;
   private final ExceptionFactory factory;
   private final RowDecoder decoder;
+  private final String[] generatedColumns;
+  private final boolean supportReturning;
+
   private volatile ColumnDefinitionPacket[] metadataList;
   private volatile int metadataIndex;
   private volatile int columnNumber;
   private volatile MariadbRowMetadata rowMetadata;
 
-  MariadbResult(boolean text, Flux<ServerMessage> dataRows, ExceptionFactory factory) {
+  MariadbResult(
+      boolean text,
+      Flux<ServerMessage> dataRows,
+      ExceptionFactory factory,
+      String[] generatedColumns,
+      boolean supportReturning) {
     this.dataRows = dataRows;
     this.factory = factory;
     // TODO do binary decoder too
     this.decoder = new TextRowDecoder();
+    this.generatedColumns = generatedColumns;
+    this.supportReturning = supportReturning;
   }
 
   @Override
@@ -99,10 +111,60 @@ final class MariadbResult implements org.mariadb.r2dbc.api.MariadbResult {
             return;
           }
 
+          // This is for server that doesn't permit RETURNING: rely on OK_packet LastInsertId
+          // to retrieve the last generated ID.
+          if (serverMessage instanceof OkPacket && generatedColumns != null && !supportReturning) {
+            if (metadataList == null) {
+              String colName = generatedColumns.length > 0 ? generatedColumns[0] : "ID";
+              metadataList = new ColumnDefinitionPacket[1];
+              metadataList[0] = ColumnDefinitionPacket.fromGeneratedId(colName);
+              rowMetadata = MariadbRowMetadata.toRowMetadata(this.metadataList);
+            }
+            OkPacket okPacket = ((OkPacket) serverMessage);
+            if (okPacket.getAffectedRows() > 1) {
+              sink.error(
+                  this.factory.createException(
+                      "Connector cannot get generated ID (using returnGeneratedValues) multiple rows before MariaDB 10.5.1",
+                      "HY000",
+                      -1));
+              return;
+            }
+            ByteBuf buf = getLongTextEncoded(okPacket.getLastInsertId());
+            sink.next(f.apply(new MariadbRow(metadataList, decoder, buf), rowMetadata));
+          }
+
           if (serverMessage.resultSetEnd()) {
             sink.complete();
           }
         });
+  }
+
+  private ByteBuf getLongTextEncoded(long value) {
+    byte[] byteValue = Long.toString(value).getBytes(StandardCharsets.US_ASCII);
+    byte[] encodedLength;
+    int length = byteValue.length;
+    if (length < 251) {
+      encodedLength = new byte[] {(byte) length};
+    } else if (length < 65536) {
+      encodedLength = new byte[] {(byte) 0xfc, (byte) length, (byte) (length >>> 8)};
+    } else if (length < 16777216) {
+      encodedLength =
+          new byte[] {(byte) 0xfd, (byte) length, (byte) (length >>> 8), (byte) (length >>> 16)};
+    } else {
+      encodedLength =
+          new byte[] {
+            (byte) 0xfd,
+            (byte) length,
+            (byte) (length >>> 8),
+            (byte) (length >>> 16),
+            (byte) (length >>> 24),
+            (byte) (length >>> 32),
+            (byte) (length >>> 40),
+            (byte) (length >>> 48),
+            (byte) (length >>> 56)
+          };
+    }
+    return Unpooled.copiedBuffer(encodedLength, byteValue);
   }
 
   @Override

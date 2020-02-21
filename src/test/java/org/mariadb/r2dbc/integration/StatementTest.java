@@ -16,12 +16,13 @@
 
 package org.mariadb.r2dbc.integration;
 
-import org.mariadb.r2dbc.BaseTest;
-import org.mariadb.r2dbc.api.MariadbConnectionMetadata;
+import io.r2dbc.spi.R2dbcTransientResourceException;
 import io.r2dbc.spi.Statement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.mariadb.r2dbc.BaseTest;
+import org.mariadb.r2dbc.api.MariadbConnectionMetadata;
 import reactor.test.StepVerifier;
 
 public class StatementTest extends BaseTest {
@@ -166,7 +167,7 @@ public class StatementTest extends BaseTest {
   void fetchSize() {
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
     // sequence table requirement
-    Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
+    Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10, 1, 0));
 
     sharedConn
         .createStatement("SELECT * FROM seq_1_to_1000")
@@ -256,6 +257,69 @@ public class StatementTest extends BaseTest {
   }
 
   @Test
+  public void returningBefore105() {
+    Assumptions.assumeFalse((isMariaDBServer() && minVersion(10, 5, 1)));
+
+    sharedConn
+        .createStatement(
+            "CREATE TEMPORARY TABLE returningBefore105 (id int not null primary key auto_increment, test varchar(10))")
+        .execute()
+        .blockLast();
+
+    try {
+      sharedConn
+          .createStatement("INSERT INTO returningBefore105(test) VALUES ('test1'), ('test2')")
+          .returnGeneratedValues("id", "test")
+          .execute();
+      Assertions.fail();
+    } catch (IllegalArgumentException e) {
+      Assertions.assertTrue(
+          e.getMessage()
+              .contains("returnGeneratedValues can have only one column before MariaDB 10.5.1"));
+    }
+
+    sharedConn
+        .createStatement("INSERT INTO returningBefore105(test) VALUES ('test1'), ('test2')")
+        .returnGeneratedValues("id")
+        .execute()
+        .flatMap(r -> r.map((row, metadata) -> row.get(0, String.class)))
+        .as(StepVerifier::create)
+        .expectErrorMatches(
+            throwable ->
+                throwable instanceof R2dbcTransientResourceException
+                    && ((R2dbcTransientResourceException) throwable).getSqlState().equals("HY000")
+                    && ((throwable.getMessage().contains("Connector cannot get generated ID"))))
+        .verify();
+
+    sharedConn
+        .createStatement("INSERT INTO returningBefore105(test) VALUES ('test1')")
+        .returnGeneratedValues("id")
+        .execute()
+        .flatMap(r -> r.map((row, metadata) -> row.get(0, String.class)))
+        .as(StepVerifier::create)
+        .expectNext("3")
+        .verifyComplete();
+
+    sharedConn
+        .createStatement("INSERT INTO returningBefore105(test) VALUES ('test3')")
+        .returnGeneratedValues("TEST_COL_NAME")
+        .execute()
+        .flatMap(r -> r.map((row, metadata) -> row.get("TEST_COL_NAME", String.class)))
+        .as(StepVerifier::create)
+        .expectNext("4")
+        .verifyComplete();
+
+    sharedConn
+        .createStatement("INSERT INTO returningBefore105(test) VALUES ('a')")
+        .returnGeneratedValues()
+        .execute()
+        .flatMap(r -> r.map((row, metadata) -> row.get("id", String.class)))
+        .as(StepVerifier::create)
+        .expectNext("5")
+        .verifyComplete();
+  }
+
+  @Test
   public void prepareReturning() {
     Assumptions.assumeTrue(isMariaDBServer() && minVersion(10, 5, 1));
 
@@ -298,4 +362,76 @@ public class StatementTest extends BaseTest {
         .expectNext("5a", "6b")
         .verifyComplete();
   }
+
+
+  @Test
+  public void prepareReturningBefore105() {
+    Assumptions.assumeFalse((isMariaDBServer() && minVersion(10, 5, 1)));
+
+    sharedConn
+            .createStatement(
+                    "CREATE TEMPORARY TABLE prepareReturningBefore105 (id int not null primary key auto_increment, test varchar(10))")
+            .execute()
+            .blockLast();
+
+    try {
+      sharedConn
+              .createStatement("INSERT INTO prepareReturningBefore105(test) VALUES (?), (?)")
+              .bind(0, "test1")
+              .bind(1, "test2")
+              .returnGeneratedValues("id", "test")
+              .execute();
+      Assertions.fail();
+    } catch (IllegalArgumentException e) {
+      Assertions.assertTrue(
+              e.getMessage()
+                      .contains("returnGeneratedValues can have only one column before MariaDB 10.5.1"));
+    }
+
+    sharedConn
+            .createStatement("INSERT INTO prepareReturningBefore105(test) VALUES (?), (?)")
+            .bind(0, "test1")
+            .bind(1, "test2")
+            .returnGeneratedValues("id")
+            .execute()
+            .flatMap(r -> r.map((row, metadata) -> row.get(0, String.class)))
+            .as(StepVerifier::create)
+            .expectErrorMatches(
+                    throwable ->
+                            throwable instanceof R2dbcTransientResourceException
+                                    && ((R2dbcTransientResourceException) throwable).getSqlState().equals("HY000")
+                                    && ((throwable.getMessage().contains("Connector cannot get generated ID"))))
+            .verify();
+
+    sharedConn
+            .createStatement("INSERT INTO prepareReturningBefore105(test) VALUES (?)")
+            .bind(0, "test1")
+            .returnGeneratedValues("id")
+            .execute()
+            .flatMap(r -> r.map((row, metadata) -> row.get(0, String.class)))
+            .as(StepVerifier::create)
+            .expectNext("3")
+            .verifyComplete();
+
+    sharedConn
+            .createStatement("INSERT INTO prepareReturningBefore105(test) VALUES (?)")
+            .bind(0, "test1")
+            .returnGeneratedValues("TEST_COL_NAME")
+            .execute()
+            .flatMap(r -> r.map((row, metadata) -> row.get("TEST_COL_NAME", String.class)))
+            .as(StepVerifier::create)
+            .expectNext("4")
+            .verifyComplete();
+
+    sharedConn
+            .createStatement("INSERT INTO prepareReturningBefore105(test) VALUES (?)")
+            .bind(0, "a")
+            .returnGeneratedValues()
+            .execute()
+            .flatMap(r -> r.map((row, metadata) -> row.get("id", String.class)))
+            .as(StepVerifier::create)
+            .expectNext("5")
+            .verifyComplete();
+  }
+
 }

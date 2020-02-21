@@ -147,9 +147,10 @@ final class MariadbClientParameterizedQueryStatement implements MariadbStatement
     Assert.requireNonNull(columns, "columns must not be null");
 
     if (!(client.getVersion().isMariaDBServer()
-        && client.getVersion().versionGreaterOrEqual(10, 5, 1))) {
-      throw new IllegalStateException(
-          "Server does not support RETURNING clause (require MariaDB 10.5.1 version)");
+            && client.getVersion().versionGreaterOrEqual(10, 5, 1))
+        && columns.length > 1) {
+      throw new IllegalArgumentException(
+          "returnGeneratedValues can have only one column before MariaDB 10.5.1");
     }
     prepareResult.validateAddingReturning();
     this.generatedColumns = columns;
@@ -165,12 +166,25 @@ final class MariadbClientParameterizedQueryStatement implements MariadbStatement
 
     Flux<ServerMessage> response =
         this.client.sendCommand(
-            new QueryWithParametersPacket(prepareResult, parameters, generatedColumns));
-
-    // separate result-set
+            new QueryWithParametersPacket(
+                prepareResult,
+                parameters,
+                generatedColumns != null
+                        && client.getVersion().isMariaDBServer()
+                        && client.getVersion().versionGreaterOrEqual(10, 5, 1)
+                    ? generatedColumns
+                    : null));
     return response
         .windowUntil(it -> it.resultSetEnd())
-        .map(dataRow -> new MariadbResult(true, dataRow, factory));
+        .map(
+            dataRow ->
+                new MariadbResult(
+                    true,
+                    dataRow,
+                    factory,
+                    generatedColumns,
+                    client.getVersion().isMariaDBServer()
+                        && client.getVersion().versionGreaterOrEqual(10, 5, 1)));
   }
 
   @Override

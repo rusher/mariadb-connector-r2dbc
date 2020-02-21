@@ -30,6 +30,7 @@ import reactor.util.Loggers;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -82,6 +83,39 @@ public final class ColumnDefinitionPacket implements ServerMessage {
   private final DataType dataType;
   private final byte decimals;
   private final short flags;
+
+  private ColumnDefinitionPacket(String name) {
+    byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
+    byte[] arr = new byte[6 + 2 * nameBytes.length];
+    int pos = 0;
+
+    // lenenc_str     catalog
+    // lenenc_str     schema
+    // lenenc_str     table
+    // lenenc_str     org_table
+    for (int i = 0; i < 4; i++) {
+      arr[pos++] = 0;
+    }
+
+    // lenenc_str     name
+    // lenenc_str     org_name
+    for (int i = 0; i < 2; i++) {
+      arr[pos++] = (byte) nameBytes.length;
+      System.arraycopy(nameBytes, 0, arr, pos, nameBytes.length);
+      pos += nameBytes.length;
+    }
+
+    this.meta = arr;
+    this.charset = 33;
+    this.length = 8;
+    this.dataType = DataType.BIGINT;
+    this.decimals = 0;
+    this.flags = ColumnFlags.PRIMARY_KEY;
+  }
+
+  public static ColumnDefinitionPacket fromGeneratedId(String name) {
+    return new ColumnDefinitionPacket(name);
+  }
 
   public ColumnDefinitionPacket(Sequencer sequencer, ByteBuf buf, ConnectionContext context) {
     this.meta = new byte[buf.readableBytes() - 12];

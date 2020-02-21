@@ -26,7 +26,6 @@ import io.r2dbc.spi.R2dbcPermissionDeniedException;
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
-import java.sql.SQLException;
 import java.util.Arrays;
 
 public final class Sha256PasswordPacket implements ClientMessage {
@@ -51,7 +50,7 @@ public final class Sha256PasswordPacket implements ClientMessage {
    * @param password password
    * @param seed seed
    * @return encoded password
-   * @throws SQLException if cannot encode password
+   * @throws R2dbcException if cannot encode password
    */
   public static byte[] encrypt(PublicKey publicKey, CharSequence password, byte[] seed)
       throws R2dbcException {
