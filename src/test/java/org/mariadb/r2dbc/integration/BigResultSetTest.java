@@ -63,7 +63,7 @@ public class BigResultSetTest extends BaseTest {
 
     for (int i = 0; i < 10; i++) {
       flux1.subscribe(s -> {
-            System.out.println("subscribe: " + total.get());
+//            System.out.println("subscribe: " + total.get());
             total.incrementAndGet();
           });
     }
