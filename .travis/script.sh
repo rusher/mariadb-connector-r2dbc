@@ -7,12 +7,10 @@ set -e
 # test different type of configuration
 ###################################################################################################################
 
+mvn clean -P bench
+
 if [ -n "BENCHMARK" ]; then
-  cmd=(mvn clean package -P bench -Dmaven.test.skip \
-    -DTEST_HOST=mariadb.example.com \
-    -DTEST_PORT=3305 \
-    -DTEST_USERNAME=bob \
-    -DTEST_DATABASE=test2)
+  cmd=(mvn clean package -P bench -Dmaven.test.skip)
 
 else
   cmd=(mvn clean test $ADDITIONNAL_VARIABLES -DjobId=${TRAVIS_JOB_ID} \
@@ -85,5 +83,9 @@ fi
 "${cmd[@]}"
 
 if [ -n "BENCHMARK" ]; then
-  java -jar target/benchmarks.jar
+  java -jar target/benchmarks.jar \
+    -DTEST_HOST=mariadb.example.com \
+    -DTEST_PORT=3305 \
+    -DTEST_USERNAME=bob \
+    -DTEST_DATABASE=test2
 fi
