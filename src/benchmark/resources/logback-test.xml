@@ -24,7 +24,7 @@
         </encoder>
     </appender>
 
-    <logger level="ERROR" name="io.r2dbc.mariadb"/>
+    <logger level="ERROR" name="org.mariadb.r2dbc"/>
     <logger level="ERROR" name="dev.miku.r2dbc.mysql"/>
     <logger level="INFO" name="io.netty.buffer"/>
     <logger level="WARN" name="reactor.ipc.netty"/>

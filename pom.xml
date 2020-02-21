@@ -17,14 +17,13 @@
 <project
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="http://maven.apache.org/POM/4.0.0"
-        xsi:schemaLocation="
-                http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.r2dbc</groupId>
+    <groupId>org.mariadb</groupId>
     <artifactId>r2dbc-mariadb</artifactId>
-    <version>0.9.0.BUILD-SNAPSHOT</version>
+    <version>0.9.0-alpha1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>R2DBC driver for MariaDB</name>
@@ -75,6 +74,18 @@
         <developerConnection>scm:git:git@github.com/mariadb-corporation/mariadb-connector-r2dbc.git
         </developerConnection>
     </scm>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>https://mariadb.atlassian.net/browse/R2DC</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
@@ -231,7 +242,7 @@
                 <configuration>
                     <source>8</source>
                     <excludePackageNames>
-                        io.r2dbc.mariadb.client,io.r2dbc.mariadb.client.codec,io.r2dbc.mariadb.client.message,io.r2dbc.mariadb.client.util
+                        org.mariadb.r2dbc.client,org.mariadb.r2dbc.client.codec,org.mariadb.r2dbc.client.message,org.mariadb.r2dbc.client.util
                     </excludePackageNames>
                 </configuration>
                 <executions>
@@ -270,6 +281,35 @@
                         <io.netty.leakDetectionLevel>paranoid</io.netty.leakDetectionLevel>
                     </systemPropertyVariables>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.6</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>

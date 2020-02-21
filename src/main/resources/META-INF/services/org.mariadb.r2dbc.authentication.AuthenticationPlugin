@@ -14,4 +14,8 @@
 # limitations under the License.
 #
 
-org.mariadb.r2dbc.MariadbConnectionFactoryProvider
+org.mariadb.r2dbc.message.flow.NativePasswordPluginFlow
+org.mariadb.r2dbc.message.flow.ClearPasswordPluginFlow
+org.mariadb.r2dbc.message.flow.Ed25519PasswordPluginFlow
+org.mariadb.r2dbc.message.flow.Sha256PasswordPluginFlow
+org.mariadb.r2dbc.message.flow.CachingSha2PasswordFlow
