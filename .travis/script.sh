@@ -9,9 +9,8 @@ set -e
 
 mvn clean -P bench
 
-if [ -n "BENCHMARK" ]; then
+if [ -n "$BENCHMARK" ]; then
   cmd=(mvn clean package -P bench -Dmaven.test.skip)
-
 else
   cmd=(mvn clean test $ADDITIONNAL_VARIABLES -DjobId=${TRAVIS_JOB_ID} \
     -DkeystorePath="$SSLCERT/client-keystore.jks" \
@@ -82,10 +81,10 @@ fi
 
 "${cmd[@]}"
 
-if [ -n "BENCHMARK" ]; then
-  java -jar target/benchmarks.jar \
-    -DTEST_HOST=mariadb.example.com \
+if [ -n "$BENCHMARK" ]; then
+  java -DTEST_HOST=mariadb.example.com \
     -DTEST_PORT=3305 \
     -DTEST_USERNAME=bob \
-    -DTEST_DATABASE=test2
+    -DTEST_DATABASE=test2 \
+    -jar target/benchmarks.jar
 fi
