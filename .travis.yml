@@ -19,6 +19,9 @@ install:
   - export PROJ_PATH=`pwd`
   - export SSLCERT=$PROJ_PATH/tmp
   - export ENTRYPOINT=$PROJ_PATH/.travis/sql
+  - export TEST_SERVER_SSL_CERT=$SSLCERT/server.crt
+  - export TEST_CLIENT_SSL_CERT=$SSLCERT/client.crt
+  - export TEST_CLIENT_KEY=$SSLCERT/client.key
 
 cache:
   directories:
