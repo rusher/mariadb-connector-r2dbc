@@ -54,16 +54,12 @@ public class BigResultSetTest extends BaseTest {
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
     // sequence table requirement
     Assumptions.assumeTrue(meta.isMariaDBServer() && minVersion(10,1,0));
-    Flux<MariadbResult> res = sharedConn.createStatement("SELECT * FROM seq_1_to_50").execute();
+    Flux<MariadbResult> res = sharedConn.createStatement("SELECT * FROM seq_1_to_50000").execute();
 
     Flux<String> flux1 =
         res.flatMap(r -> r.map((row, metadata) -> row.get(0, String.class))).share();
 
     AtomicInteger total = new AtomicInteger();
-    flux1.doOnComplete(() -> {
-      System.out.println("complete! " + total.get());
-      Assertions.assertTrue(total.get() >= 50);
-    });
 
     for (int i = 0; i < 10; i++) {
       flux1.subscribe(s -> {
@@ -73,6 +69,8 @@ public class BigResultSetTest extends BaseTest {
     }
 
     flux1.blockLast();
+    System.out.println("finished: " + total.get());
+    Assertions.assertTrue(total.get() >= 50000);
   }
 
 

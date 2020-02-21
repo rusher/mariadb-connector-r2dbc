@@ -7,11 +7,12 @@ set -e
 # test different type of configuration
 ###################################################################################################################
 
-mvn clean -P bench
+
 
 if [ -n "$BENCHMARK" ]; then
   cmd=(mvn clean package -P bench -Dmaven.test.skip)
 else
+  mvn clean
   cmd=(mvn clean test $ADDITIONNAL_VARIABLES -DjobId=${TRAVIS_JOB_ID} \
     -DkeystorePath="$SSLCERT/client-keystore.jks" \
     -DTEST_HOST=mariadb.example.com \

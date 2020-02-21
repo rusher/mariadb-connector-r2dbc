@@ -28,8 +28,8 @@ import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 @State(Scope.Benchmark)
-@Warmup(iterations = 7, timeUnit = TimeUnit.SECONDS, time = 1)
-@Measurement(iterations = 7, timeUnit = TimeUnit.SECONDS, time = 1)
+@Warmup(iterations = 10, timeUnit = TimeUnit.SECONDS, time = 1)
+@Measurement(iterations = 10, timeUnit = TimeUnit.SECONDS, time = 1)
 @Fork(value = 5)
 @Threads(value = -1) // detecting CPU count
 @BenchmarkMode(Mode.AverageTime)
