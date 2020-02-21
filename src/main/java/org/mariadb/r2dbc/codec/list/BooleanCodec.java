@@ -52,17 +52,17 @@ public class BooleanCodec implements Codec<Boolean> {
 
   @Override
   public Boolean decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends Boolean> type) {
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Boolean> type) {
     switch (column.getDataType()) {
       case BIT:
-        return BitSetCodec.parseBit(buf).get(0);
+        return BitSetCodec.parseBit(buf, length).get(0);
       case VARCHAR:
       case VARSTRING:
         String rawValue =
-            buf.readCharSequence(buf.readableBytes(), StandardCharsets.UTF_8).toString();
+            buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
         return "1".equals(rawValue);
       default:
-        return LongCodec.parse(buf) == 1L;
+        return LongCodec.parse(buf, length) == 1L;
     }
   }
 

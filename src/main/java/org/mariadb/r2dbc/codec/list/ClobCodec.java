@@ -44,8 +44,8 @@ public class ClobCodec implements Codec<Clob> {
   }
 
   @Override
-  public Clob decodeText(ByteBuf buf, ColumnDefinitionPacket column, Class<? extends Clob> type) {
-    String rawValue = buf.readCharSequence(buf.readableBytes(), StandardCharsets.UTF_8).toString();
+  public Clob decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Clob> type) {
+    String rawValue = buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
     return Clob.from(Mono.just(rawValue));
   }
 

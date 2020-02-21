@@ -62,24 +62,24 @@ public class IntCodec implements Codec<Integer> {
 
   @Override
   public Integer decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends Integer> type) {
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Integer> type) {
     long result;
     switch (column.getDataType()) {
       case BIT:
-        return (int) ByteCodec.parseBit(buf);
+        return (int) ByteCodec.parseBit(buf, length);
       case TINYINT:
       case SMALLINT:
       case MEDIUMINT:
       case INTEGER:
       case BIGINT:
       case YEAR:
-        result = LongCodec.parse(buf);
+        result = LongCodec.parse(buf, length);
         break;
       case DECIMAL:
       case DOUBLE:
       case FLOAT:
         String str =
-            buf.getCharSequence(buf.readerIndex(), buf.readableBytes(), StandardCharsets.US_ASCII)
+            buf.readCharSequence(length, StandardCharsets.US_ASCII)
                 .toString();
         try {
           result = new BigDecimal(str).longValue();
@@ -88,6 +88,7 @@ public class IntCodec implements Codec<Integer> {
           throw new IllegalArgumentException(String.format("Incorrect format %s", str));
         }
       default:
+        buf.skipBytes(length);
         throw new IllegalArgumentException(
             String.format("Unexpected datatype %s", column.getDataType()));
     }

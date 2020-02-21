@@ -78,9 +78,9 @@ public class StringCodec implements Codec<String> {
 
   @Override
   public String decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends String> type) {
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends String> type) {
     if (column.getDataType() == DataType.BIT) {
-      BitSet val = BitSetCodec.parseBit(buf);
+      BitSet val = BitSetCodec.parseBit(buf, length);
       StringBuilder sb = new StringBuilder(val.length() * 8 + 3);
       sb.append("b'");
       int i = val.length();
@@ -92,7 +92,7 @@ public class StringCodec implements Codec<String> {
     }
 
     String rawValue =
-        buf.getCharSequence(buf.readerIndex(), buf.readableBytes(), StandardCharsets.UTF_8)
+        buf.readCharSequence(length, StandardCharsets.UTF_8)
             .toString();
     if (column.isZeroFill()) {
       return zeroFillingIfNeeded(rawValue, column);

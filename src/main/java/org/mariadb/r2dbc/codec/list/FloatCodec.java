@@ -51,11 +51,11 @@ public class FloatCodec implements Codec<Float> {
   }
 
   @Override
-  public Float decodeText(ByteBuf buf, ColumnDefinitionPacket column, Class<? extends Float> type) {
+  public Float decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Float> type) {
     if (column.getDataType() == DataType.BIT) {
-      return Float.valueOf(ByteCodec.parseBit(buf));
+      return Float.valueOf(ByteCodec.parseBit(buf, length));
     }
-    String str = buf.readCharSequence(buf.readableBytes(), StandardCharsets.US_ASCII).toString();
+    String str = buf.readCharSequence(length, StandardCharsets.US_ASCII).toString();
     try {
       return Float.valueOf(str);
     } catch (NumberFormatException nfe) {

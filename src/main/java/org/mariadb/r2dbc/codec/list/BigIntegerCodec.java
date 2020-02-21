@@ -54,12 +54,12 @@ public class BigIntegerCodec implements Codec<BigInteger> {
 
   @Override
   public BigInteger decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends BigInteger> type) {
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends BigInteger> type) {
     switch (column.getDataType()) {
       case BIT:
-        return BigInteger.valueOf(ByteCodec.parseBit(buf));
+        return BigInteger.valueOf(ByteCodec.parseBit(buf, length));
       case DECIMAL:
-        String value = buf.readCharSequence(buf.readableBytes(), StandardCharsets.UTF_8).toString();
+        String value = buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
         return new BigDecimal(value).toBigInteger();
 
       case TINYINT:
@@ -68,9 +68,10 @@ public class BigIntegerCodec implements Codec<BigInteger> {
       case INTEGER:
       case BIGINT:
       case YEAR:
-        String val = buf.readCharSequence(buf.readableBytes(), StandardCharsets.UTF_8).toString();
+        String val = buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
         return new BigInteger(val);
     }
+    buf.skipBytes(length);
     throw new IllegalArgumentException(
         String.format("Unexpected datatype %s", column.getDataType()));
   }

@@ -53,11 +53,11 @@ public class DoubleCodec implements Codec<Double> {
 
   @Override
   public Double decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends Double> type) {
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Double> type) {
     if (column.getDataType() == DataType.BIT) {
-      return Double.valueOf(ByteCodec.parseBit(buf));
+      return Double.valueOf(ByteCodec.parseBit(buf,length));
     }
-    String str = buf.readCharSequence(buf.readableBytes(), StandardCharsets.US_ASCII).toString();
+    String str = buf.readCharSequence(length, StandardCharsets.US_ASCII).toString();
     try {
       return Double.valueOf(str);
     } catch (NumberFormatException nfe) {

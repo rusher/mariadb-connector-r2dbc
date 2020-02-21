@@ -55,11 +55,11 @@ public class BigDecimalCodec implements Codec<BigDecimal> {
 
   @Override
   public BigDecimal decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends BigDecimal> type) {
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends BigDecimal> type) {
     if (column.getDataType() == DataType.BIT) {
-      return BigDecimal.valueOf(ByteCodec.parseBit(buf));
+      return BigDecimal.valueOf(ByteCodec.parseBit(buf, length));
     }
-    String value = buf.readCharSequence(buf.readableBytes(), StandardCharsets.UTF_8).toString();
+    String value = buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
     return new BigDecimal(value);
   }
 

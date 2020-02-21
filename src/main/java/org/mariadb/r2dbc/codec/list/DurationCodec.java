@@ -43,12 +43,12 @@ public class DurationCodec implements Codec<Duration> {
 
   @Override
   public Duration decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends Duration> type) {
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Duration> type) {
 
     int[] parts;
     switch (column.getDataType()) {
       case TIME:
-        parts = LocalTimeCodec.parseTime(buf);
+        parts = LocalTimeCodec.parseTime(buf, length);
         return Duration.ZERO
             .plusHours(parts[0])
             .plusMinutes(parts[1])
@@ -57,7 +57,7 @@ public class DurationCodec implements Codec<Duration> {
 
       case TIMESTAMP:
       case DATETIME:
-        parts = LocalDateTimeCodec.parseTimestamp(buf);
+        parts = LocalDateTimeCodec.parseTimestamp(buf, length);
         if (parts == null) return null;
         return Duration.ZERO
             .plusHours(parts[3])
@@ -66,6 +66,7 @@ public class DurationCodec implements Codec<Duration> {
             .plusNanos(parts[6]);
 
       default:
+        buf.skipBytes(length);
         throw new IllegalArgumentException(
             String.format("type %s not supported", column.getDataType()));
     }

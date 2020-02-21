@@ -7,20 +7,30 @@ set -e
 # test different type of configuration
 ###################################################################################################################
 
-cmd=(mvn clean test $ADDITIONNAL_VARIABLES -DjobId=${TRAVIS_JOB_ID} \
-  -DkeystorePath="$SSLCERT/client-keystore.jks" \
-  -DTEST_HOST=mariadb.example.com \
-  -DTEST_PORT=3305 \
-  -DTEST_USERNAME=bob \
-  -DTEST_DATABASE=test2 \
-  -DRUN_LONG_TEST=false \
-  -DkeystorePassword="kspass" \
-  -DserverCertificatePath="$SSLCERT/server.crt" \
-  -Dkeystore2Path="$SSLCERT/fullclient-keystore.jks" \
-  -Dkeystore2Password="kspass" -DkeyPassword="kspasskey" \
-  -Dkeystore2PathP12="$SSLCERT/fullclient-keystore.p12" \
-  -DrunLongTest=true \
-  -DserverPublicKey="$SSLCERT/public.key")
+if [ -n "BENCHMARK" ]; then
+  cmd=(mvn clean package -P bench -Dmaven.test.skip \
+    -DTEST_HOST=mariadb.example.com \
+    -DTEST_PORT=3305 \
+    -DTEST_USERNAME=bob \
+    -DTEST_DATABASE=test2)
+
+else
+  cmd=(mvn clean test $ADDITIONNAL_VARIABLES -DjobId=${TRAVIS_JOB_ID} \
+    -DkeystorePath="$SSLCERT/client-keystore.jks" \
+    -DTEST_HOST=mariadb.example.com \
+    -DTEST_PORT=3305 \
+    -DTEST_USERNAME=bob \
+    -DTEST_DATABASE=test2 \
+    -DRUN_LONG_TEST=false \
+    -DkeystorePassword="kspass" \
+    -DserverCertificatePath="$SSLCERT/server.crt" \
+    -Dkeystore2Path="$SSLCERT/fullclient-keystore.jks" \
+    -Dkeystore2Password="kspass" -DkeyPassword="kspasskey" \
+    -Dkeystore2PathP12="$SSLCERT/fullclient-keystore.p12" \
+    -DrunLongTest=true \
+    -DserverPublicKey="$SSLCERT/public.key")
+fi
+
 
 if [ -n "$MAXSCALE_VERSION" ]; then
   ###################################################################################################################
@@ -73,3 +83,7 @@ if [ -n "$MAXSCALE_VERSION" ]; then
 fi
 
 "${cmd[@]}"
+
+if [ -n "BENCHMARK" ]; then
+  java -jar target/benchmarks.jar
+fi

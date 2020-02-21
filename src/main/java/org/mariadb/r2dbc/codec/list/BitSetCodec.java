@@ -29,8 +29,8 @@ public class BitSetCodec implements Codec<BitSet> {
 
   public static final BitSetCodec INSTANCE = new BitSetCodec();
 
-  public static BitSet parseBit(ByteBuf buf) {
-    byte[] arr = new byte[buf.readableBytes()];
+  public static BitSet parseBit(ByteBuf buf, int length) {
+    byte[] arr = new byte[length];
     buf.readBytes(arr);
     return BitSet.valueOf(arr);
   }
@@ -41,8 +41,8 @@ public class BitSetCodec implements Codec<BitSet> {
 
   @Override
   public BitSet decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends BitSet> type) {
-    return parseBit(buf);
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends BitSet> type) {
+    return parseBit(buf, length);
   }
 
   public boolean canEncode(Object value) {

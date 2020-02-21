@@ -34,11 +34,12 @@ public class LocalDateTimeCodec implements Codec<LocalDateTime> {
   private static EnumSet<DataType> COMPATIBLE_TYPES =
       EnumSet.of(DataType.DATETIME, DataType.TIMESTAMP);
 
-  public static int[] parseTimestamp(ByteBuf buf) {
+  public static int[] parseTimestamp(ByteBuf buf, int length) {
     int nanoLen = -1;
     int[] timestampsPart = new int[] {0, 0, 0, 0, 0, 0, 0};
     int partIdx = 0;
-    while (buf.readableBytes() > 0) {
+    int idx = 0;
+    while (idx++ < length) {
       byte b = buf.readByte();
       if (b == '-' || b == ' ' || b == ':') {
         partIdx++;
@@ -50,10 +51,11 @@ public class LocalDateTimeCodec implements Codec<LocalDateTime> {
         continue;
       }
       if (b < '0' || b > '9') {
+        buf.skipBytes(length - idx);
         throw new IllegalArgumentException(
             String.format(
-                "Illegal date format: value %s%s",
-                b, buf.readCharSequence(buf.readableBytes(), StandardCharsets.US_ASCII)));
+                "Illegal date format: value %s",
+                b));
       }
       if (nanoLen >= 0) nanoLen++;
       timestampsPart[partIdx] = timestampsPart[partIdx] * 10 + b - 48;
@@ -89,16 +91,17 @@ public class LocalDateTimeCodec implements Codec<LocalDateTime> {
 
   @Override
   public LocalDateTime decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends LocalDateTime> type) {
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends LocalDateTime> type) {
 
     int[] parts;
     switch (column.getDataType()) {
       case TIMESTAMP:
       case DATETIME:
-        parts = parseTimestamp(buf);
+        parts = parseTimestamp(buf, length);
         break;
 
       default:
+        buf.skipBytes(length);
         throw new IllegalArgumentException("date type not supported");
     }
     if (parts == null) return null;

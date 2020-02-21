@@ -48,8 +48,8 @@ public class ByteArrayCodec implements Codec<byte[]> {
 
   @Override
   public byte[] decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends byte[]> type) {
-    byte[] arr = new byte[buf.readableBytes()];
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends byte[]> type) {
+    byte[] arr = new byte[length];
     buf.readBytes(arr);
     return arr;
   }

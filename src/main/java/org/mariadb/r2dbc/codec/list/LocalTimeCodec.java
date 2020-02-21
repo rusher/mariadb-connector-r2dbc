@@ -34,8 +34,8 @@ public class LocalTimeCodec implements Codec<LocalTime> {
   private static EnumSet<DataType> COMPATIBLE_TYPES =
       EnumSet.of(DataType.TIME, DataType.DATETIME, DataType.TIMESTAMP);
 
-  public static int[] parseTime(ByteBuf buf) {
-    String raw = buf.readCharSequence(buf.readableBytes(), StandardCharsets.UTF_8).toString();
+  public static int[] parseTime(ByteBuf buf, int length) {
+    String raw = buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
     boolean negate = raw.startsWith("-");
     if (negate) {
       raw = raw.substring(1);
@@ -91,21 +91,22 @@ public class LocalTimeCodec implements Codec<LocalTime> {
 
   @Override
   public LocalTime decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends LocalTime> type) {
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends LocalTime> type) {
 
     int[] parts;
     switch (column.getDataType()) {
       case TIME:
-        parts = parseTime(buf);
+        parts = parseTime(buf, length);
         return LocalTime.of(parts[0] % 24, parts[1], parts[2], parts[3]);
 
       case TIMESTAMP:
       case DATETIME:
-        parts = LocalDateTimeCodec.parseTimestamp(buf);
+        parts = LocalDateTimeCodec.parseTimestamp(buf, length);
         if (parts == null) return null;
         return LocalTime.of(parts[3], parts[4], parts[5], parts[6]);
 
       default:
+        buf.skipBytes(length);
         throw new IllegalArgumentException(
             String.format("type %s not supported", column.getDataType()));
     }

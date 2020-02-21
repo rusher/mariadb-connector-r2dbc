@@ -42,8 +42,8 @@ public class MediumCodec implements Codec<Integer> {
 
   @Override
   public Integer decodeText(
-      ByteBuf buf, ColumnDefinitionPacket column, Class<? extends Integer> type) {
-    long result = LongCodec.parse(buf);
+      ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Integer> type) {
+    long result = LongCodec.parse(buf, length);
     return (int) result;
   }
 

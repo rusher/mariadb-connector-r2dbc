@@ -27,14 +27,14 @@ public class ByteCodec implements Codec<Byte> {
 
   public static final ByteCodec INSTANCE = new ByteCodec();
 
-  public static long parseBit(ByteBuf buf) {
-    if (buf.readableBytes() == 1) {
+  public static long parseBit(ByteBuf buf, int length) {
+    if (length == 1) {
       return buf.readByte();
     }
     long val = 0;
     do {
-      val += ((long) buf.readUnsignedByte()) << (8 * buf.readableBytes());
-    } while (buf.readableBytes() > 0);
+      val += ((long) buf.readUnsignedByte()) << (8 * length);
+    } while (length > 0);
     return val;
   }
 
@@ -44,12 +44,14 @@ public class ByteCodec implements Codec<Byte> {
   }
 
   @Override
-  public Byte decodeText(ByteBuf buf, ColumnDefinitionPacket column, Class<? extends Byte> type) {
-    if (buf.readableBytes() == 0) {
+  public Byte decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Byte> type) {
+    if (length == 0) {
       throw new IllegalArgumentException(
           String.format("Unexpected datatype %s", column.getDataType()));
     }
-    return buf.readByte();
+    Byte val = buf.readByte();
+    if (length > 1) buf.skipBytes(length - 1);
+    return val;
   }
 
   public boolean canEncode(Object value) {

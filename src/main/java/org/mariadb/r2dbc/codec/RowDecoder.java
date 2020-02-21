@@ -48,17 +48,15 @@ public abstract class RowDecoder {
       return null;
     }
 
-    ByteBuf val = buf.readSlice(length);
-
     // type generic, return "natural" java type
     if (Object.class == type || type == null) {
       Codec<T> defaultCodec = ((Codec<T>) column.getDefaultCodec());
-      return defaultCodec.decodeText(val, column, type);
+      return defaultCodec.decodeText(buf, length, column, type);
     }
 
     for (Codec<?> codec : Codecs.LIST) {
       if (codec.canDecode(column, type)) {
-        return ((Codec<T>) codec).decodeText(val, column, type);
+        return ((Codec<T>) codec).decodeText(buf, length, column, type);
       }
     }
 

@@ -39,8 +39,8 @@ public class BlobCodec implements Codec<Blob> {
   }
 
   @Override
-  public Blob decodeText(ByteBuf buf, ColumnDefinitionPacket column, Class<? extends Blob> type) {
-    return Blob.from(Mono.just(buf.nioBuffer()));
+  public Blob decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Blob> type) {
+    return Blob.from(Mono.just(buf.readSlice(length).nioBuffer()));
   }
 
   public boolean canEncode(Object value) {

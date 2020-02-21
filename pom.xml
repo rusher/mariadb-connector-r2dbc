@@ -23,7 +23,7 @@
 
     <groupId>org.mariadb</groupId>
     <artifactId>r2dbc-mariadb</artifactId>
-    <version>0.9.0-alpha1-SNAPSHOT</version>
+    <version>0.8.1-alpha1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>R2DBC driver for MariaDB</name>
@@ -40,11 +40,11 @@
         <netty.version>4.1.43.Final</netty.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <r2dbc-spi.version>0.8.0.RELEASE</r2dbc-spi.version>
+        <r2dbc-spi.version>0.8.1.RELEASE</r2dbc-spi.version>
         <reactor.version>Dysprosium-SR3</reactor.version>
         <scram-client.version>2.1</scram-client.version>
         <mariadb-jdbc.version>2.5.3</mariadb-jdbc.version>
-        <r2dbc-mysql.version>0.8.0.RELEASE</r2dbc-mysql.version>
+        <r2dbc-mysql.version>0.8.1.RELEASE</r2dbc-mysql.version>
         <uberjar.name>benchmarks</uberjar.name>
     </properties>
 

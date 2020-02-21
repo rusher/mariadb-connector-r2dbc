@@ -41,14 +41,17 @@ public class LongCodec implements Codec<Long> {
           DataType.YEAR,
           DataType.BIGINT);
 
-  public static long parse(ByteBuf buf) {
+  public static long parse(ByteBuf buf, int length) {
     long result = 0;
     boolean negate = false;
-    if (buf.readableBytes() > 0 && buf.getByte(buf.readerIndex()) == 45) { // minus sign
+    int idx = 0;
+    if (length > 0 && buf.getByte(buf.readerIndex()) == 45) { // minus sign
       negate = true;
+      idx++;
       buf.skipBytes(1);
     }
-    while (buf.readableBytes() > 0) {
+
+    while (idx++ < length) {
       result = result * 10 + buf.readByte() - 48;
     }
 
@@ -66,33 +69,23 @@ public class LongCodec implements Codec<Long> {
   }
 
   @Override
-  public Long decodeText(ByteBuf buf, ColumnDefinitionPacket column, Class<? extends Long> type) {
+  public Long decodeText(ByteBuf buf, int length, ColumnDefinitionPacket column, Class<? extends Long> type) {
     switch (column.getDataType()) {
       case BIT:
-        return ByteCodec.parseBit(buf);
+        return ByteCodec.parseBit(buf, length);
       case TINYINT:
       case SMALLINT:
       case MEDIUMINT:
       case INTEGER:
       case YEAR:
-        return parse(buf);
+        return parse(buf, length);
 
       case BIGINT:
         String str =
-            buf.readCharSequence(buf.readableBytes(), StandardCharsets.US_ASCII).toString();
+            buf.readCharSequence(length, StandardCharsets.US_ASCII).toString();
         return new BigInteger(str).longValueExact();
-
-        //      case DECIMAL:
-        //      case DOUBLE:
-        //      case FLOAT:
-        //        String str = buf.readCharSequence(buf.readableBytes(),
-        // StandardCharsets.US_ASCII).toString();
-        //        try {
-        //          return new BigDecimal(str).longValue();
-        //        } catch (NumberFormatException nfe) {
-        //          throw new IllegalArgumentException(String.format("Incorrect format %s", str));
-        //        }
     }
+    buf.skipBytes(length);
     throw new IllegalArgumentException(
         String.format("Unexpected datatype %s", column.getDataType()));
   }
