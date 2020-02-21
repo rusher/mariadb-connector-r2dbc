@@ -37,7 +37,7 @@
         <jmh.version>1.22</jmh.version>
         <logback.version>1.2.3</logback.version>
         <mockito.version>3.1.0</mockito.version>
-        <netty.version>4.1.43.Final</netty.version>
+        <netty.version>4.1.45.Final</netty.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <r2dbc-spi.version>0.8.1.RELEASE</r2dbc-spi.version>
