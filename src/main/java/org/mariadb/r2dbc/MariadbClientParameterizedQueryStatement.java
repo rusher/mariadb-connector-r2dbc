@@ -28,14 +28,17 @@ import org.mariadb.r2dbc.util.ClientPrepareResult;
 import reactor.core.publisher.Flux;
 import reactor.util.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 final class MariadbClientParameterizedQueryStatement implements MariadbStatement {
 
   private final Client client;
   private final String sql;
   private final ClientPrepareResult prepareResult;
-  private final Parameter<?>[] parameters;
+  private Parameter<?>[] parameters;
+  private List<Parameter<?>[]> batchingParameters;
   private final MariadbConnectionConfiguration configuration;
   private String[] generatedColumns;
 
@@ -62,8 +65,10 @@ final class MariadbClientParameterizedQueryStatement implements MariadbStatement
         throw new IllegalArgumentException(String.format("Parameter at position %i is not set", i));
       }
     }
-
-    return new MariadbClientParameterizedQueryStatement(client, sql, configuration);
+    if (batchingParameters == null) batchingParameters = new ArrayList<>();
+    batchingParameters.add(parameters);
+    parameters = new Parameter<?>[prepareResult.getParamCount()];
+    return this;
   }
 
   @Override
@@ -134,7 +139,43 @@ final class MariadbClientParameterizedQueryStatement implements MariadbStatement
       }
     }
 
-    return execute(this.sql, this.prepareResult, parameters, this.generatedColumns);
+    if (batchingParameters == null) {
+      return execute(this.sql, this.prepareResult, parameters, this.generatedColumns);
+    } else {
+      add();
+      Flux<Flux<ServerMessage>> fluxMsg =
+          Flux.create(
+              sink -> {
+                for (Parameter<?>[] parameters : this.batchingParameters) {
+                  Flux<ServerMessage> in =
+                      this.client.sendCommand(
+                          new QueryWithParametersPacket(
+                              prepareResult,
+                              parameters,
+                              generatedColumns != null
+                                      && client.getVersion().isMariaDBServer()
+                                      && client.getVersion().versionGreaterOrEqual(10, 5, 1)
+                                  ? generatedColumns
+                                  : null));
+                  sink.next(in);
+                  in.subscribe();
+                }
+                sink.complete();
+              });
+
+      return fluxMsg
+          .flatMap(Flux::from)
+          .windowUntil(it -> it.resultSetEnd())
+          .map(
+              dataRow ->
+                  new org.mariadb.r2dbc.MariadbResult(
+                      true,
+                      dataRow,
+                      ExceptionFactory.INSTANCE,
+                      null,
+                      client.getVersion().isMariaDBServer()
+                          && client.getVersion().versionGreaterOrEqual(10, 5, 1)));
+    }
   }
 
   @Override
