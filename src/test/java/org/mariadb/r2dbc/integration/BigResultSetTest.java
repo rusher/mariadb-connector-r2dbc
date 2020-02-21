@@ -65,18 +65,13 @@ public class BigResultSetTest extends BaseTest {
       Assertions.assertTrue(total.get() >= 50);
     });
 
-    List<Flux<String>> fluxes =  new ArrayList<>();
     for (int i = 0; i < 10; i++) {
-      fluxes.add(flux1.handle((s, synchronousSink) -> {
+      flux1.subscribe(s -> {
             System.out.println("subscribe: " + total.get());
             total.incrementAndGet();
-            synchronousSink.next(s);
-          }));
+          });
     }
 
-    for (int i = 0; i < 10; i++) {
-      fluxes.get(i).subscribe();
-    }
     flux1.blockLast();
   }
 
