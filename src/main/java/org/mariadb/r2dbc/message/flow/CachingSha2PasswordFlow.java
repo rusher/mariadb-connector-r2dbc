@@ -116,6 +116,7 @@ public final class CachingSha2PasswordFlow extends Sha256PasswordPluginFlow {
                 && !configuration.getServerRsaPublicKeyFile().isEmpty()) {
               publicKey = readPublicKeyFromFile(configuration.getServerRsaPublicKeyFile());
               state = State.SEND_AUTH;
+
               return new Sha256PasswordPacket(
                   authMoreDataPacket.getSequencer(),
                   configuration.getPassword(),

@@ -199,9 +199,8 @@ public class Sha256PluginTest extends BaseTest {
   public void cachingSha256PluginTestWithServerRsaKey() throws Exception {
     Assumptions.assumeTrue(!isMariaDBServer());
     Assumptions.assumeTrue(serverPublicKey != null);
-    MariadbConnectionMetadata meta = sharedConn.getMetadata();
     Assumptions.assumeTrue(
-        !System.getProperty("os.name").contains("Windows") && meta.minVersion(8, 0, 0));
+        !System.getProperty("os.name").contains("Windows") && minVersion(8, 0, 0));
 
     MariadbConnectionConfiguration conf =
         TestConfiguration.defaultBuilder
