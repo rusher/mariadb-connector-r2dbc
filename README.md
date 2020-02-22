@@ -39,27 +39,28 @@ Using builder
 ```java
 
 MariadbConnectionConfiguration conf = MariadbConnectionConfiguration.builder()
-        .host(host)
-        .port(port)
-        .username(username)
-        .password(password)
-        .database(database).build();
+            .host("localhost")
+            .port(3306)
+            .username("myUser")
+            .password("MySuperPassword")
+            .database("db")
+            .build();
 MariadbConnectionFactory factory = new MariadbConnectionFactory(conf);
 
 //OR
 
-ConnectionFactory factory = ConnectionFactories.get("r2dbc:mariadb://user:pswword@host:3306/myDB?option1=value");
+ConnectionFactory factory = ConnectionFactories.get("r2dbc:mariadb://user:password@host:3306/myDB?option1=value");
 ```
 
-
-
+Basic example: 
 ```java
     MariadbConnectionConfiguration conf = MariadbConnectionConfiguration.builder()
-            .host(host)
-            .port(port)
-            .username(username)
-            .password(password)
-            .database(database).build();
+            .host("localhost")
+            .port(3306)
+            .username("myUser")
+            .password("MySuperPassword")
+            .database("db")
+            .build();
     MariadbConnectionFactory factory = new MariadbConnectionFactory(conf);
 
     MariadbConnection connection = factory.create().block();
@@ -82,17 +83,17 @@ ConnectionFactory factory = ConnectionFactories.get("r2dbc:mariadb://user:pswwor
 | **`database`** | Default database to use when establishing the connection. | *string* | 
 | **`connectTimeout`** | Sets the connection timeout in milliseconds. Default to 10s. |  *Duration* | 
 | **`socket`** | Permits connections to the database through the Unix domain socket for faster connection whe server is local. |  *string* | 
-| **`allowMultiQueries`** | Allows you to issue several SQL statements in a single `quer()` call. (That is, `INSERT INTO a VALUES('b'); INSERT INTO c VALUES('d');`).  <br/><br/>This may be a **security risk** as it allows for SQL Injection attacks. Default to false|  *boolean* | 
-| **`connectionAttributes`** | When performance_schema is active, permit to send server some client information. Those informations can be retrieved on server within tables performance_schema.session_connect_attrs and performance_schema.session_account_connect_attrs. This can permit from server an identification of client/application per connection|*Map<String,String>* | 
+| **`allowMultiQueries`** | Allows you to issue several SQL statements in a single call. (That is, `INSERT INTO a VALUES('b'); INSERT INTO c VALUES('d');`).  <br/><br/>This may be a **security risk** as it allows for SQL Injection attacks. Default to false|  *boolean* | 
+| **`connectionAttributes`** | When performance_schema is active, permit to send server some client information. <br>Those information can be retrieved on server within tables performance_schema.session_connect_attrs and performance_schema.session_account_connect_attrs. This can permit from server an identification of client/application per connection|*Map<String,String>* | 
 | **`sessionVariables`** | Permits to set session variables upon successful connection |  *Map<String,String>* |
-| **`tlsProtocol`** |Force TLS/SSL protocol to a specific set of TLS versions (like "TLSv1.3","TLSv1.2"|*List<String>*|
-| **`serverSslCert`** | Permits providing server's certificate in DER form, or server's CA certificate. This permits a self-signed certificate to be trusted. Can be used in one of 3 forms : * serverSslCert=/path/to/cert.pem (full path to certificate), serverSslCert=classpath:relative/cert.pem (relative to current classpath) or as verbatim DER-encoded certificate string "------BEGIN CERTIFICATE-----" |*String*| |
-| **`clientSslCert`** | Permits providing client's certificate in DER form (use only for mutual authentication). Can be used in one of 3 forms : * serverSslCert=/path/to/cert.pem (full path to certificate), serverSslCert=classpath:relative/cert.pem (relative to current classpath) or as verbatim DER-encoded certificate string "------BEGIN CERTIFICATE-----" |*String*| |
+| **`tlsProtocol`** |Force TLS/SSL protocol to a specific set of TLS versions (example "TLSv1.2", "TLSv1.3").<br> If not set, use java default list|*List<String>*|
+| **`serverSslCert`** | Permits providing server's certificate in DER form, or server's CA certificate. <br/>This permits a self-signed certificate to be trusted. Can be used in one of 3 forms : <ul><li> serverSslCert=/path/to/cert.pem (full path to certificate)</li><li> serverSslCert=classpath:relative/cert.pem (relative to current classpath)</li><li> as verbatim DER-encoded certificate string "------BEGIN CERTIFICATE-----"</li></ul> |*String*| |
+| **`clientSslCert`** | Permits providing client's certificate in DER form (use only for mutual authentication). Can be used in one of 3 forms : <ul><li>clientSslCert=/path/to/cert.pem (full path to certificate)</li><li> clientSslCert=classpath:relative/cert.pem (relative to current classpath)</li><li> as verbatim DER-encoded certificate string "------BEGIN CERTIFICATE-----"</li></ul> |*String*| |
 | **`clientSslKey`** | client private key path(for mutual authentication) |*String* | |
 | **`clientSslPassword`** | client private key password |*charsequence* | |
-| **`sslMode`** | ssl requirement. Possible value are <ul><li>DISABLED, // NO SSL</li><li>ENABLE_TRUST, // Encryption, but no certificate and hostname validation  (DEVELOPMENT ONLY)<\li><li>ENABLE_WITHOUT_HOSTNAME_VERIFICATION, // Encryption, certificates validation, BUT no hostname validation<\li><li>ENABLE, // Standard SSL use: Encryption, certificate validation and hostname validation<\li></ul> | DISABLED |
-| **`serverRsaPublicKeyFile`** | <i>only for MySQL server</i> Server RSA public key, for SHA256 authentication |*String* | |
-| **`allowPublicKeyRetrieval`** | <i>only for MySQL server</i> Permit retrieved Server RSA public key from server. This can create a security issue |*boolean* | | 
+| **`sslMode`** | ssl requirement. Possible value are <ul><li>DISABLED, // NO SSL</li><li>ENABLE_TRUST, // Encryption, but no certificate and hostname validation  (DEVELOPMENT ONLY)</li><li>ENABLE_WITHOUT_HOSTNAME_VERIFICATION, // Encryption, certificates validation, BUT no hostname validation</li><li>ENABLE, // Standard SSL use: Encryption, certificate validation and hostname validation</li></ul> | DISABLED |
+| **`serverRsaPublicKeyFile`** | <i>only for MySQL server</i><br/> Server RSA public key, for SHA256 authentication |*String* | |
+| **`allowPublicKeyRetrieval`** | <i>only for MySQL server</i><br/> Permit retrieved Server RSA public key from server. This can create a security issue |*boolean* | | 
       
 
 ## Tracker 
