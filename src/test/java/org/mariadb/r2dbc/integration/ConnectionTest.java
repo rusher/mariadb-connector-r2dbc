@@ -16,8 +16,7 @@
 
 package org.mariadb.r2dbc.integration;
 
-import io.r2dbc.spi.R2dbcNonTransientResourceException;
-import io.r2dbc.spi.ValidationDepth;
+import io.r2dbc.spi.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mariadb.r2dbc.BaseTest;
@@ -27,10 +26,13 @@ import org.mariadb.r2dbc.TestConfiguration;
 import org.mariadb.r2dbc.api.MariadbConnection;
 import org.mariadb.r2dbc.api.MariadbStatement;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigInteger;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -196,6 +198,80 @@ public class ConnectionTest extends BaseTest {
     scheduler.awaitTermination(120, TimeUnit.SECONDS);
     connection.close().subscribe();
     Assertions.assertEquals(100, completed.get());
+  }
+
+  @Test
+  void connectionAttributes() throws Exception {
+
+    Map<String, String> connectionAttributes = new HashMap<>();
+    connectionAttributes.put("APPLICATION", "MyApp");
+    connectionAttributes.put("OTHER", "OTHER information");
+
+    MariadbConnectionConfiguration conf =
+        TestConfiguration.defaultBuilder.clone().connectionAttributes(connectionAttributes).build();
+    MariadbConnection connection = new MariadbConnectionFactory(conf).create().block();
+    connection.close().block();
+  }
+
+  @Test
+  void sessionVariables() throws Exception {
+    long[] res =
+        sharedConn
+            .createStatement("SELECT @@wait_timeout, @@net_read_timeout")
+            .execute()
+            .flatMap(
+                r ->
+                    r.map(
+                        (row, metadata) ->
+                            new long[] {row.get(0, Long.class), row.get(1, Long.class)}))
+            .blockLast();
+
+    Map<String, String> sessionVariables = new HashMap<>();
+    sessionVariables.put("net_read_timeout", "60");
+    sessionVariables.put("wait_timeout", "2147483");
+
+    MariadbConnectionConfiguration conf =
+        TestConfiguration.defaultBuilder.clone().sessionVariables(sessionVariables).build();
+    MariadbConnection connection = new MariadbConnectionFactory(conf).create().block();
+    connection
+        .createStatement("SELECT @@wait_timeout, @@net_read_timeout")
+        .execute()
+        .flatMap(
+            r ->
+                r.map(
+                    (row, metadata) -> {
+                      Assertions.assertEquals(row.get(0, Long.class), 2147483);
+                      Assertions.assertEquals(row.get(1, Long.class), 60);
+                      Assertions.assertFalse(row.get(0, Long.class) == res[0]);
+                      Assertions.assertFalse(row.get(1, Long.class) == res[1]);
+                      return 0;
+                    }))
+        .blockLast();
+
+    connection.close().block();
+  }
+
+  @Test
+  void usingOption() {
+    ConnectionFactory factory =
+        ConnectionFactories.get(
+            String.format(
+                "r2dbc:mariadb://%s:%s@%s:%s/%s",
+                TestConfiguration.username,
+                TestConfiguration.password,
+                TestConfiguration.host,
+                TestConfiguration.port,
+                TestConfiguration.database));
+    Connection connection = Mono.from(factory.create()).block();
+    Flux.from(connection.createStatement("SELECT * FROM myTable").execute())
+        .flatMap(
+            r ->
+                r.map(
+                    (row, metadata) -> {
+                      System.out.println(row.get(0, String.class));
+                      return row.get(0, String.class);
+                    }));
+    Mono.from(connection.close()).subscribe();
   }
 
   protected class ExecuteQueries implements Runnable {

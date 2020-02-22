@@ -20,6 +20,6 @@ public enum SslMode {
   DISABLED, // NO SSL
   ENABLE_TRUST, // Encryption, but no certificate and hostname validation  (DEVELOPMENT ONLY)
   ENABLE_WITHOUT_HOSTNAME_VERIFICATION, // Encryption, certificates validation, BUT no hostname
-  // validation
+                                        // validation
   ENABLE, // Standard SSL use: Encryption, certificate validation and hostname validation
 }

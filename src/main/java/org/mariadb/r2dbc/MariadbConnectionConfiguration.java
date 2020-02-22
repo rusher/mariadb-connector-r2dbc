@@ -42,6 +42,7 @@ public final class MariadbConnectionConfiguration {
   private final String username;
   private final boolean allowMultiQueries;
   private final Map<String, String> connectionAttributes;
+  private final Map<String, String> sessionVariables;
   private final SslConfig sslConfig;
   private final String serverRsaPublicKeyFile;
   private final boolean allowPublicKeyRetrieval;
@@ -52,6 +53,7 @@ public final class MariadbConnectionConfiguration {
       @Nullable String database,
       @Nullable String host,
       @Nullable Map<String, String> connectionAttributes,
+      @Nullable Map<String, String> sessionVariables,
       @Nullable CharSequence password,
       int port,
       @Nullable String socket,
@@ -65,10 +67,11 @@ public final class MariadbConnectionConfiguration {
       SslMode sslMode,
       @Nullable String serverRsaPublicKeyFile,
       boolean allowPublicKeyRetrieval) {
-    this.connectTimeout = connectTimeout;
+    this.connectTimeout = connectTimeout == null ? Duration.ofSeconds(10) : connectTimeout;
     this.database = database;
     this.host = host;
     this.connectionAttributes = connectionAttributes;
+    this.sessionVariables = sessionVariables;
     this.password = password;
     this.port = port;
     this.socket = socket;
@@ -166,6 +169,11 @@ public final class MariadbConnectionConfiguration {
   @Nullable
   public Map<String, String> getConnectionAttributes() {
     return this.connectionAttributes;
+  }
+
+  @Nullable
+  public Map<String, String> getSessionVariables() {
+    return this.sessionVariables;
   }
 
   @Nullable
@@ -292,7 +300,8 @@ public final class MariadbConnectionConfiguration {
     @Nullable private Duration connectTimeout;
     @Nullable private String database;
     @Nullable private String host;
-    private Map<String, String> options;
+    @Nullable private Map<String, String> sessionVariables;
+    @Nullable private Map<String, String> connectionAttributes;
     @Nullable private CharSequence password;
     private int port = DEFAULT_PORT;
     @Nullable private String socket;
@@ -330,7 +339,8 @@ public final class MariadbConnectionConfiguration {
           this.connectTimeout,
           this.database,
           this.host,
-          this.options,
+          this.connectionAttributes,
+          this.sessionVariables,
           this.password,
           this.port,
           this.socket,
@@ -354,6 +364,16 @@ public final class MariadbConnectionConfiguration {
      */
     public Builder connectTimeout(@Nullable Duration connectTimeout) {
       this.connectTimeout = connectTimeout;
+      return this;
+    }
+
+    public Builder connectionAttributes(@Nullable Map<String, String> connectionAttributes) {
+      this.connectionAttributes = connectionAttributes;
+      return this;
+    }
+
+    public Builder sessionVariables(@Nullable Map<String, String> sessionVariables) {
+      this.sessionVariables = sessionVariables;
       return this;
     }
 
@@ -389,7 +409,7 @@ public final class MariadbConnectionConfiguration {
             Assert.requireNonNull(v, "option values must not be null");
           });
 
-      this.options = options;
+      this.connectionAttributes = options;
       return this;
     }
 
@@ -576,7 +596,7 @@ public final class MariadbConnectionConfiguration {
           + host
           + '\''
           + ", options="
-          + options
+          + connectionAttributes
           + ", password="
           + hiddenPwd.toString()
           + ", port="

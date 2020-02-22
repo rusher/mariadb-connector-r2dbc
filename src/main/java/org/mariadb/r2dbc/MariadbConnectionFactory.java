@@ -28,6 +28,7 @@ import reactor.util.annotation.Nullable;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Iterator;
 import java.util.Map;
 
 public final class MariadbConnectionFactory implements ConnectionFactory {
@@ -69,15 +70,24 @@ public final class MariadbConnectionFactory implements ConnectionFactory {
         .cast(Client.class)
         .flatMap(
             client -> {
+              Mono<Void> waiting = Mono.empty();
+              if (configuration.getSessionVariables() != null
+                  && configuration.getSessionVariables().size() > 0) {
+                waiting = setSessionVariables(client);
+              }
+
               if (configuration.getIsolationLevel() == null) {
-                Mono<IsolationLevel> isolationLevelMono = getIsolationLevel(client);
+
+                Mono<IsolationLevel> isolationLevelMono = waiting.then(getIsolationLevel(client));
                 return isolationLevelMono
                     .map(it -> new MariadbConnection(client, it, configuration))
                     .onErrorResume(throwable -> this.closeWithError(client, throwable));
               } else {
-                return Mono.just(
-                        new MariadbConnection(
-                            client, configuration.getIsolationLevel(), configuration))
+                return waiting
+                    .then(
+                        Mono.just(
+                            new MariadbConnection(
+                                client, configuration.getIsolationLevel(), configuration)))
                     .onErrorResume(throwable -> this.closeWithError(client, throwable));
               }
             })
@@ -106,6 +116,24 @@ public final class MariadbConnectionFactory implements ConnectionFactory {
   @Override
   public String toString() {
     return "MariadbConnectionFactory{" + "configuration=" + this.configuration + '}';
+  }
+
+  private Mono<Void> setSessionVariables(Client client) {
+    StringBuilder sql = new StringBuilder("SET ");
+
+    Map<String, String> sessionVariable = configuration.getSessionVariables();
+    Iterator<String> keys = sessionVariable.keySet().iterator();
+    for (int i = 0; i < sessionVariable.size(); i++) {
+      if (i > 0) sql.append(",");
+      String key = keys.next();
+      String value = sessionVariable.get(key);
+      if (value == null)
+        throw new IllegalArgumentException(
+            String.format("Session variable '%s' has no value", key));
+      sql.append(key).append("=").append(value);
+    }
+
+    return new MariadbSimpleQueryStatement(client, sql.toString()).execute().last().then();
   }
 
   private Mono<IsolationLevel> getIsolationLevel(Client client) {
