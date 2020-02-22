@@ -24,7 +24,8 @@ else
     -Dkeystore2Password="kspass" -DkeyPassword="kspasskey" \
     -Dkeystore2PathP12="$SSLCERT/fullclient-keystore.p12" \
     -DrunLongTest=true \
-    -DserverPublicKey="$SSLCERT/public.key")
+    -DserverPublicKey="$SSLCERT/public.key" \
+    -Dtest=org.mariadb.r2dbc.integration.authentication.Sha* )
 fi
 
 if [ -n "$MAXSCALE_VERSION" ]; then
