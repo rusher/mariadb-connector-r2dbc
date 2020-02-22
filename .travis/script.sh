@@ -25,7 +25,7 @@ else
     -Dkeystore2PathP12="$SSLCERT/fullclient-keystore.p12" \
     -DrunLongTest=true \
     -DserverPublicKey="$SSLCERT/public.key" \
-    -Dtest=org.mariadb.r2dbc.integration.authentication.Sha* )
+    -Dtest=org.mariadb.r2dbc.integration.authentication.Sha*)
 fi
 
 if [ -n "$MAXSCALE_VERSION" ]; then

@@ -98,6 +98,15 @@ public class Sha256PluginTest extends BaseTest {
           .createStatement("GRANT ALL PRIVILEGES ON *.* TO 'cachingSha256User2'@'%'")
           .execute()
           .blockLast();
+      sharedConn
+          .createStatement(
+              "CREATE USER 'cachingSha256User3'@'%'  IDENTIFIED WITH caching_sha2_password BY 'password'")
+          .execute()
+          .subscribe();
+      sharedConn
+          .createStatement("GRANT ALL PRIVILEGES ON *.* TO 'cachingSha256User3'@'%'")
+          .execute()
+          .blockLast();
     } else {
       forceTls = "&enabledSslProtocolSuites=TLSv1.1";
     }
@@ -117,6 +126,18 @@ public class Sha256PluginTest extends BaseTest {
         .map(res -> res.getRowsUpdated())
         .onErrorReturn(Mono.empty())
         .subscribe();
+    sharedConn
+        .createStatement("DROP USER cachingSha256User2")
+        .execute()
+        .map(res -> res.getRowsUpdated())
+        .onErrorReturn(Mono.empty())
+        .subscribe();
+    sharedConn
+        .createStatement("DROP USER cachingSha256User3")
+        .execute()
+        .map(res -> res.getRowsUpdated())
+        .onErrorReturn(Mono.empty())
+        .subscribe();
   }
 
   @Test
@@ -124,8 +145,7 @@ public class Sha256PluginTest extends BaseTest {
     Assumptions.assumeTrue(!isMariaDBServer());
     Assumptions.assumeTrue(serverPublicKey != null);
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
-    Assumptions.assumeTrue(
-        !System.getProperty("os.name").contains("Windows") && meta.minVersion(8, 0, 0));
+    Assumptions.assumeTrue(meta.minVersion(8, 0, 0));
 
     MariadbConnectionConfiguration conf =
         TestConfiguration.defaultBuilder
@@ -141,8 +161,7 @@ public class Sha256PluginTest extends BaseTest {
   @Test
   public void sha256PluginTestWithoutServerRsaKey() throws Exception {
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
-    Assumptions.assumeTrue(
-        !System.getProperty("os.name").contains("Windows") && meta.minVersion(8, 0, 0));
+    Assumptions.assumeTrue(meta.minVersion(8, 0, 0));
 
     MariadbConnectionConfiguration conf =
         TestConfiguration.defaultBuilder
@@ -159,8 +178,7 @@ public class Sha256PluginTest extends BaseTest {
   public void sha256PluginTestException() throws Exception {
     Assumptions.assumeTrue(!isMariaDBServer());
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
-    Assumptions.assumeTrue(
-        !System.getProperty("os.name").contains("Windows") && meta.minVersion(8, 0, 0));
+    Assumptions.assumeTrue(meta.minVersion(8, 0, 0));
 
     MariadbConnectionConfiguration conf =
         TestConfiguration.defaultBuilder
@@ -199,8 +217,7 @@ public class Sha256PluginTest extends BaseTest {
   public void cachingSha256PluginTestWithServerRsaKey() throws Exception {
     Assumptions.assumeTrue(!isMariaDBServer());
     Assumptions.assumeTrue(serverPublicKey != null);
-    Assumptions.assumeTrue(
-        !System.getProperty("os.name").contains("Windows") && minVersion(8, 0, 0));
+    Assumptions.assumeTrue(minVersion(8, 0, 0));
 
     MariadbConnectionConfiguration conf =
         TestConfiguration.defaultBuilder
@@ -217,13 +234,12 @@ public class Sha256PluginTest extends BaseTest {
   public void cachingSha256PluginTestWithoutServerRsaKey() throws Exception {
     Assumptions.assumeTrue(serverPublicKey != null);
     MariadbConnectionMetadata meta = sharedConn.getMetadata();
-    Assumptions.assumeTrue(
-        !System.getProperty("os.name").contains("Windows") && meta.minVersion(8, 0, 0));
+    Assumptions.assumeTrue(meta.minVersion(8, 0, 0));
 
     MariadbConnectionConfiguration conf =
         TestConfiguration.defaultBuilder
             .clone()
-            .username("cachingSha256User")
+            .username("cachingSha256User2")
             .password("password")
             .allowPublicKeyRetrieval(true)
             .build();
@@ -247,7 +263,7 @@ public class Sha256PluginTest extends BaseTest {
     MariadbConnectionConfiguration conf =
         TestConfiguration.defaultBuilder
             .clone()
-            .username("cachingSha256User2")
+            .username("cachingSha256User3")
             .password("password")
             .build();
     new MariadbConnectionFactory(conf)

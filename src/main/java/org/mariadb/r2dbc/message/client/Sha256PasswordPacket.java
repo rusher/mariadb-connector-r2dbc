@@ -80,7 +80,7 @@ public final class Sha256PasswordPacket implements ClientMessage {
   @Override
   public ByteBuf encode(ConnectionContext context, ByteBufAllocator allocator) {
     if (password == null) return allocator.ioBuffer(0);
-    ByteBuf buf = allocator.ioBuffer(32);
+    ByteBuf buf = allocator.ioBuffer(256);
     buf.writeBytes(encrypt(publicKey, password, seed));
     return buf;
   }

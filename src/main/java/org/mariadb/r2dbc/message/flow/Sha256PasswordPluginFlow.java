@@ -98,7 +98,6 @@ public class Sha256PasswordPluginFlow implements AuthenticationPlugin {
   public static PublicKey readPublicKey(AuthMoreDataPacket authMoreDataPacket)
       throws R2dbcException {
     ByteBuf buf = authMoreDataPacket.getBuf();
-    buf.skipBytes(1); // skip header
     byte[] key = new byte[buf.readableBytes()];
     buf.readBytes(key);
     return generatePublicKey(key);
